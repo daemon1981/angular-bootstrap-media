@@ -1,4 +1,4 @@
-angular.module('directives.media', ['security.authorization', 'ngSanitize'])
+angular.module('directives.media', ['security.authorization'])
 
 .controller('MediaController', ['$scope', 'security', function($scope, security){
   var updateSuccess = function(result) {

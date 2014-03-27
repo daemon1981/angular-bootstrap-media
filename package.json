@@ -1,0 +1,42 @@
+{
+  "name": "angular-bootstrap-media",
+  "version": "0.0.0",
+  "description": "Bootstrap Media with social interactivity",
+  "main": "index.js",
+  "scripts": {
+    "test": "grunt"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/daemon1981/angular-bootstrap-media.git"
+  },
+  "keywords": [
+    "angular",
+    "bootstrap",
+    "media"
+  ],
+  "author": "Damien Saillard <dam.saillard@gmail.com> (http://damien-saillard.fr/)",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "gitHead": "2d3adb574565cb1bb71934c099ba40d93dcd9dbc",
+  "bugs": {
+    "url": "https://github.com/daemon1981/angular-bootstrap-media/issues"
+  },
+  "engines": {
+    "node": ">= 0.10"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "v0.4.3",
+    "grunt-contrib-clean": "v0.4.0",
+    "grunt-contrib-copy": "v0.5.0",
+    "grunt-contrib-jshint": "v0.8.0",
+    "grunt-contrib-concat": "v0.1.2",
+    "grunt-contrib-uglify": "v0.4.0",
+    "grunt-karma": "v0.7.2",
+    "grunt-html2js": "~0.1.0",
+    "grunt-contrib-watch": "v0.5.3",
+    "karma-jasmine": "v0.2.1",
+    "karma-phantomjs-launcher": "v0.1.2"
+  }
+}

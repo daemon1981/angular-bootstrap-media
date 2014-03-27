@@ -3,7 +3,7 @@
         <gravatar email="media.creator.email" size="30" class="img-polaroid pull-right"></gravatar>
     </a>
     <div class="media-body">
-        <div ng-bind-html="media.text"></div>
+        <div>{{media.text}}</div>
         <div>
             <button type="button" class="btn btn-danger btn-xs" ng-show="ownMedia()" ng-click="removeMedia(media)">{{deleteLabel}}</button>
             &nbsp;&nbsp;
