@@ -1,0 +1,25 @@
+# angular-bootstrap-media [![Build Status](https://secure.travis-ci.org/daemon1981/angular-bootstrap-media.png)](https://travis-ci.org/daemon1981/angular-bootstrap-media)
+
+## Description
+
+Bootstrap Media with social interactivity
+
+## Dependencies
+
+This repository contains a set of native AngularJS directives based on Bootstrap's markup and CSS. As a result no dependency on jQuery or Bootstrap's JavaScript is required. The only required dependencies are:
+
+AngularJS (minimal version 1.0.8)
+Bootstrap CSS (tested with version 3.0.3). This version of the library (0.10.0) works only with Bootstrap CSS in version 3.x. 0.8.0 is the last version of this library that supports Bootstrap CSS in version 2.3.x.
+
+## Use
+
+```
+<link href="bootstrap.min.css" rel="stylesheet">
+...
+<script src="angular.min.js"></script>
+<script src="bootstrap.min.js"></script>
+```
+
+### Projects using angular-bootstrap-media
+
+ - [Workbook](https://github.com/eleven-labs/Workbook)
