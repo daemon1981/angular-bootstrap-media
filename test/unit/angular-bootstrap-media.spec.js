@@ -24,14 +24,14 @@ describe('directives.media', function () {
     return media;
   }
 
-  beforeEach(module('templates.app'));
+  beforeEach(module('angular.bootstrap.media.templates'));
   beforeEach(module('directives.media'));
 
   describe('media', function () {
-    beforeEach(inject(function($rootScope, $compile, security) {
+    beforeEach(inject(function($rootScope, $compile) {
       $scope = $rootScope;
-      element = $compile('<media media="media" delete-label="Supprimer le media"></media>')($scope);
-      security.currentUser = { _id: 'user-id' };
+      $scope.currentUser = { _id: 'user-id' };
+      element = $compile('<media media="media" current-user="currentUser" delete-label="Supprimer le media"></media>')($scope);
     }));
 
     it('create a media component', function() {
@@ -186,10 +186,10 @@ describe('directives.media', function () {
   });
 
   describe('comment', function () {
-    beforeEach(inject(function($rootScope, $compile, security) {
+    beforeEach(inject(function($rootScope, $compile) {
       $scope = $rootScope;
-      element = $compile('<comment comment="comment" media="media" on-comment-remove="removeComment(comment)"></comment>')($scope);
-      security.currentUser = { _id: 'user-id' };
+      $scope.currentUser = { _id: 'user-id' };
+      element = $compile('<comment comment="comment" current-user="currentUser" media="media" on-comment-remove="removeComment(comment)"></comment>')($scope);
     }));
 
     it('create a comment', function(){

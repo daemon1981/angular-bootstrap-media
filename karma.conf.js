@@ -11,8 +11,8 @@ module.exports = function(config) {
       'bower_components/bootstrap/dist/js/bootstrap.js',
       'bower_components/angular/angular.js',
       'bower_components/angular-mocks/angular-mocks.js',
-      'angular-bootstrap-media.js',
-      'test/unit/angular-bootstrap-media.spec.js'
+      'dist/angular-bootstrap-media.js',
+      'test/unit/**/*.js'
     ],
     
     // use dots reporter, as travis terminal does not support escaping sequences

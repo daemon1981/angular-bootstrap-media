@@ -11,6 +11,28 @@ This repository contains a set of native AngularJS directives based on Bootstrap
 AngularJS (minimal version 1.0.8)
 Bootstrap CSS (tested with version 3.0.3). This version of the library (0.10.0) works only with Bootstrap CSS in version 3.x. 0.8.0 is the last version of this library that supports Bootstrap CSS in version 2.3.x.
 
+## Installation
+
+```
+bower install angular-bootstrap-media
+```
+
+## Contributing to the project
+
+### Development
+#### Prepare your environment
+* Install [Node.js](http://nodejs.org/) and NPM (should come with)
+* Install global dev dependencies: `npm install -g grunt-cli`
+* Install local dev dependencies: `npm install`
+
+#### Build
+* Build the project: `grunt`
+
+#### TDD
+* Run test: `grunt test-watch`
+ 
+This will start Karma server and will continuously watch files in the project, executing tests upon every change.
+
 ## Use
 
 ```

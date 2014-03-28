@@ -1,6 +1,6 @@
-angular.module('directives.media', ['security.authorization'])
+angular.module('directives.media', [])
 
-.controller('MediaController', ['$scope', 'security', function($scope, security){
+.controller('MediaController', ['$scope', function($scope){
   var updateSuccess = function(result) {
     $scope.media = result;
   };
@@ -14,7 +14,7 @@ angular.module('directives.media', ['security.authorization'])
   };
 
   $scope.userInArray = function(userIds) {
-    return userIds.indexOf(security.currentUser._id) !== -1;
+    return userIds.indexOf($scope.currentUser._id) !== -1;
   };
 
   $scope.like = function() {
@@ -26,7 +26,7 @@ angular.module('directives.media', ['security.authorization'])
   };
 
   $scope.ownMedia = function() {
-    return $scope.media.creator === security.currentUser._id;
+    return $scope.media.creator === $scope.currentUser._id;
   };
 
   $scope.comment = function() {
@@ -64,17 +64,18 @@ angular.module('directives.media', ['security.authorization'])
   return {
     restrict: 'E',
     scope: {
+      currentUser: '=',
       media: '=',
       'deleteLabel': '@',
       'editMedia': '&onMediaEdit',
       'removeMedia': '&onMediaRemove'
     },
-    templateUrl: 'directives/media/templates/media.tpl.html',
+    templateUrl: 'media.tpl.html',
     controller: 'MediaController'
   };
 })
 
-.controller('CommentController', ['$scope', 'security', function($scope, security){
+.controller('CommentController', ['$scope', function($scope){
   var updateSuccess = function(commentId) {
     return function() {
       $scope.media.$getComment(
@@ -95,7 +96,7 @@ angular.module('directives.media', ['security.authorization'])
 
   $scope.userInArray = function(userIds) {
     if (userIds) {
-      return userIds.indexOf(security.currentUser._id) !== -1;
+      return userIds.indexOf($scope.currentUser._id) !== -1;
     }
   };
 
@@ -108,7 +109,7 @@ angular.module('directives.media', ['security.authorization'])
   };
 
   $scope.ownComment = function() {
-    return $scope.comment.creator === security.currentUser._id;
+    return $scope.comment.creator === $scope.currentUser._id;
   };
 }])
 
@@ -116,11 +117,12 @@ angular.module('directives.media', ['security.authorization'])
   return {
     restrict: 'E',
     scope: {
+      currentUser: '=',
       media: '=',
       comment: '=',
       'removeComment': '&onCommentRemove'
     },
-    templateUrl: 'directives/media/templates/comment.tpl.html',
+    templateUrl: 'comment.tpl.html',
     controller: 'CommentController'
   };
 });

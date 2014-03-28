@@ -18,7 +18,7 @@
         <div>
             <button type="button" class="btn btn-link" ng-click="displayPreviousComments()">Voir les commentaires précédents</button>
         </div>
-        <comment class="comment" comment="comment" media="media" ng-repeat="comment in media.comments" on-comment-remove="removeComment(comment)"></comment>
+        <comment class="comment" comment="comment" media="media" current-user="currentUser" ng-repeat="comment in media.comments" on-comment-remove="removeComment(comment)"></comment>
         <div class="media comment">
             <a class="pull-left" href="#">
                 <gravatar email="user.email" size="30" class="img-polaroid pull-right"></gravatar>

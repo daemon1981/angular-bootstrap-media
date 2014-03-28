@@ -11,8 +11,8 @@ module.exports = function (grunt) {
 
   // Default task.
   grunt.registerTask('default', ['build','jshint','karma:unit']);
-  grunt.registerTask('build', ['clean:build','html2js','concat','copy:assets','clean:build_templates']);
-  grunt.registerTask('release', ['clean:build','html2js','uglify','copy:assets','clean:build_templates','jshint','karma:unit']);
+  grunt.registerTask('build', ['clean:build','html2js','concat','clean:build_templates']);
+  grunt.registerTask('release', ['clean:build','html2js','uglify','clean:build_templates','jshint','karma:unit']);
   grunt.registerTask('test-watch', ['karma:watch']);
 
   // Print a timestamp (useful for when watching)
@@ -44,14 +44,6 @@ module.exports = function (grunt) {
     clean: {
       build: ['<%= distdir %>/*'],
       build_templates: ['<%= distdir %>/templates.js']
-    },
-    copy: {
-      assets: {
-        files: [
-          { dest: '<%= distdir %>', src : '**', expand: true, cwd: 'src/assets/' },
-          { dest: '<%= distdir %>/fonts', src : '**', expand: true, cwd: 'bower_components/bootstrap/dist/fonts' }
-        ]
-      }
     },
     karma: {
       unit: { options: karmaConfig('karma.conf.js') },
