@@ -1,6 +1,6 @@
 {
   "name": "angular-bootstrap-media",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Bootstrap Media with social interactivity",
   "main": "index.js",
   "scripts": {
