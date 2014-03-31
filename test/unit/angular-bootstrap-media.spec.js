@@ -1,4 +1,4 @@
-describe('directives.media', function () {
+describe('angular.bootstrap.media', function () {
   var $scope, element;
 
   function createMockComment(id, message, likes, creator) {
@@ -25,7 +25,7 @@ describe('directives.media', function () {
   }
 
   beforeEach(module('angular.bootstrap.media.templates'));
-  beforeEach(module('directives.media'));
+  beforeEach(module('angular.bootstrap.media'));
 
   describe('media', function () {
     beforeEach(inject(function($rootScope, $compile) {

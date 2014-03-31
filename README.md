@@ -17,6 +17,36 @@ Bootstrap CSS (tested with version 3.0.3). This version of the library (0.10.0) 
 bower install angular-bootstrap-media
 ```
 
+## Use
+
+### Include in your header
+
+```
+<link href="bootstrap.min.css" rel="stylesheet">
+...
+<script src="angular.min.js"></script>
+<script src="bootstrap.min.js"></script>
+<script src="angular-bootstrap-media.js"></script>
+```
+
+### Include module in your angular module
+
+```
+angular.module('myModule', ['angular-bootstrap-media']);
+```
+
+### Exemple of using it for a list of posts
+
+```
+<media
+    media="post"
+    ng-repeat="post in posts"
+    on-media-edit="editPost(post)"
+    on-media-remove="removePost(post)"
+    delete-label="Supprimer le post">
+</media>
+```
+
 ## Contributing to the project
 
 ### Development
@@ -32,15 +62,6 @@ bower install angular-bootstrap-media
 * Run test: `grunt test-watch`
  
 This will start Karma server and will continuously watch files in the project, executing tests upon every change.
-
-## Use
-
-```
-<link href="bootstrap.min.css" rel="stylesheet">
-...
-<script src="angular.min.js"></script>
-<script src="bootstrap.min.js"></script>
-```
 
 ### Projects using angular-bootstrap-media
 

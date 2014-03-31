@@ -1,4 +1,4 @@
-angular.module('directives.media', [])
+angular.module('angular.bootstrap.media', [])
 
 .controller('MediaController', ['$scope', function($scope){
   var updateSuccess = function(result) {
