@@ -1,4 +1,4 @@
-/*! angular-bootstrap-media - v0.0.5 - 2014-04-01
+/*! angular-bootstrap-media - v0.0.6 - 2014-04-01
  * Copyright (c) 2014 Damien Saillard <dam.saillard@gmail.com> (http://damien-saillard.fr/);
  * Licensed 
  */

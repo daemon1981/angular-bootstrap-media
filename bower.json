@@ -1,7 +1,7 @@
 {
   "name": "angular-bootstrap-media",
   "main": "dist/angular-bootstrap-media.js",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Bootstrap Media with social interactivity",
   "homepage": "https://github.com/daemon1981/angular-bootstrap-media",
   "authors": [
