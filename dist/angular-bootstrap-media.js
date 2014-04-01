@@ -2,7 +2,7 @@
  * Copyright (c) 2014 Damien Saillard <dam.saillard@gmail.com> (http://damien-saillard.fr/);
  * Licensed 
  */
-angular.module('angular.bootstrap.media', [])
+angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates'])
 
 .controller('MediaController', ['$scope', function($scope){
   var updateSuccess = function(result) {

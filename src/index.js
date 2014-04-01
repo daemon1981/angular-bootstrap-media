@@ -1,4 +1,4 @@
-angular.module('angular.bootstrap.media', [])
+angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates'])
 
 .controller('MediaController', ['$scope', function($scope){
   var updateSuccess = function(result) {
