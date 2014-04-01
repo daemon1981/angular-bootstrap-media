@@ -12,7 +12,7 @@ module.exports = function (grunt) {
   // Default task.
   grunt.registerTask('default', ['build','jshint','karma:unit']);
   grunt.registerTask('build', ['clean:build','html2js','concat','clean:build_templates']);
-  grunt.registerTask('release', ['clean:build','html2js','uglify','clean:build_templates','jshint','karma:unit']);
+  grunt.registerTask('release', ['clean:build','html2js','concat','uglify','clean:build_templates','jshint','karma:unit']);
   grunt.registerTask('test-watch', ['karma:watch']);
 
   // Print a timestamp (useful for when watching)
@@ -74,7 +74,7 @@ module.exports = function (grunt) {
           banner: "<%= banner %>"
         },
         src:['<%= src.js %>' ,'<%= src.jsTpl %>'],
-        dest:'<%= distdir %>/<%= pkg.name %>.js'
+        dest:'<%= distdir %>/<%= pkg.name %>.min.js'
       }
     },
     watch:{
