@@ -35,7 +35,7 @@ describe('angular.bootstrap.media', function () {
     }));
 
     it('create a media component', function() {
-      $scope.media = createMockMedia('media-id', 'dummy text', [], []);
+      $scope.media = createMockMedia('media-id', 'dummy text', [], [], 'test@eleven-labs.com');
       $scope.$digest();
       // check buttons presence
       expect(element.find('button').length).toBe(6);

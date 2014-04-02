@@ -26,6 +26,7 @@ bower install angular-bootstrap-media
 ...
 <script src="angular.min.js"></script>
 <script src="bootstrap.min.js"></script>
+<script src="angular-simple-gravatar.js"></script>
 <script src="angular-bootstrap-media.js"></script>
 ```
 
@@ -35,16 +36,44 @@ bower install angular-bootstrap-media
 angular.module('myModule', ['angular-bootstrap-media']);
 ```
 
-### Exemple of using it for a list of posts
+### Implementing in template
 
 ```
 <media
-    media="post"
-    ng-repeat="post in posts"
-    on-media-edit="editPost(post)"
-    on-media-remove="removePost(post)"
-    delete-label="Supprimer le post">
+    media="media"
+    current-user="currentUser"
+    on-media-edit="myControllerEditMethod(media)"
+    on-media-remove="myControllerRemoveMethod(media)"
+    delete-label="Supprimer le media"
+    default-gravatar-image="monsterid">
 </media>
+```
+
+### minimalist structure of the media and the currentUser
+
+```
+var media = {
+  text:  'dummy test',
+  likes: [],
+  comments: [
+    {
+      message: 'dummy message',
+      likes: [],
+      creator: {
+        email: 'dummy@email.com'
+      }
+    }
+  ],
+  creator: {
+    email: 'dummy@email.com'
+  }
+};
+```
+
+```
+var currentUser = {
+  email: 'dummy@email.com',
+}
 ```
 
 ## Contributing to the project
@@ -62,6 +91,10 @@ angular.module('myModule', ['angular-bootstrap-media']);
 * Run test: `grunt test-watch`
  
 This will start Karma server and will continuously watch files in the project, executing tests upon every change.
+
+### Recommanded node js lib to provide media object
+
+ - [Mongoose Rattle Plugin](https://github.com/daemon1981/mongoose-rattle-plugin)
 
 ### Projects using angular-bootstrap-media
 

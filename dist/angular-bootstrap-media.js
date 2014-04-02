@@ -182,7 +182,7 @@ angular.module("media.tpl.html", []).run(["$templateCache", function($templateCa
     "        <comment class=\"comment\" comment=\"comment\" media=\"media\" current-user=\"currentUser\" ng-repeat=\"comment in media.comments\" on-comment-remove=\"removeComment(comment)\" default-gravatar-image=\"{{defaultGravatarImage}}\"></comment>\n" +
     "        <div class=\"media comment-editor\">\n" +
     "            <a class=\"pull-left\" href=\"#\">\n" +
-    "                <gravatar email=\"user.email\" size=\"30\" class=\"img-polaroid pull-right\" default-image=\"defaultGravatarImage\"></gravatar>\n" +
+    "                <gravatar email=\"currentUser.email\" size=\"30\" class=\"img-polaroid pull-right\" default-image=\"defaultGravatarImage\"></gravatar>\n" +
     "            </a>\n" +
     "            <div class=\"media-body\">\n" +
     "                <form ng-submit=\"comment()\">\n" +
