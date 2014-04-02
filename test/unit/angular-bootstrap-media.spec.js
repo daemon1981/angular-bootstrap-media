@@ -46,16 +46,16 @@ describe('angular.bootstrap.media', function () {
       expect(element.find('button[ng-click="editMedia(media)"]').length).toBe(1);
       expect(element.find('button[ng-click="displayPreviousComments()"]').length).toBe(1);
       // comment elements presences
-      expect(element.find('.media.comment').length).toBe(1);
-      expect(element.find('.media.comment .media-body').length).toBe(1);
-      expect(element.find('.media.comment form[ng-submit="comment()"]').length).toBe(1);
-      expect(element.find('.media.comment input[type="submit"]').length).toBe(1);
+      expect(element.find('.media.comment-editor').length).toBe(1);
+      expect(element.find('.media.comment-editor .media-body').length).toBe(1);
+      expect(element.find('.media.comment-editor form[ng-submit="comment()"]').length).toBe(1);
+      expect(element.find('.media.comment-editor input[type="submit"]').length).toBe(1);
       // check gravatars presence
       expect(element.find('img').length).toBe(2);
       expect(element.find('img:eq(0)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
       expect(element.find('img:eq(1)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
       // no comments
-      expect(element.find('comment').length).toBe(0);
+      expect(element.find('.media.comment').length).toBe(0);
       // no one like
       expect(element.find('.media-num-likes').text().trim()).toBe('0');
     });
@@ -69,7 +69,7 @@ describe('angular.bootstrap.media', function () {
       expect(element.find('img:eq(1)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
       expect(element.find('img:eq(2)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
       // no comments
-      expect(element.find('comment').length).toBe(1);
+      expect(element.find('.media.comment').length).toBe(1);
       // no one like
       expect(element.find('.media-num-likes').text().trim()).toBe('0');
     });
@@ -82,7 +82,7 @@ describe('angular.bootstrap.media', function () {
         [createMockComment('comment-id', 'dummy message', [])]
       );
       $scope.$digest();
-      expect(element.find('comment').length).toBe(1);
+      expect(element.find('.media.comment').length).toBe(1);
       expect(element.find('.media-num-likes').length).toBe(1);
       expect(element.find('.media-num-likes').text().trim()).toBe('2');
     });
@@ -135,13 +135,13 @@ describe('angular.bootstrap.media', function () {
         };
         $scope.$digest();
 
-        expect(element.find('comment').length).toBe(0);
+        expect(element.find('.media.comment').length).toBe(0);
 
-        element.find('.media.comment input[name="message"]').val('dummy message');
-        element.find('.media.comment input[name="message"]').trigger('input');
-        element.find('.media.comment form[ng-submit="comment()"] input[type="submit"]').click();
+        element.find('.media.comment-editor input[name="message"]').val('dummy message');
+        element.find('.media.comment-editor input[name="message"]').trigger('input');
+        element.find('.media.comment-editor form[ng-submit="comment()"] input[type="submit"]').click();
 
-        expect(element.find('comment').length).toBe(1);
+        expect(element.find('.media.comment').length).toBe(1);
       });
     });
 
@@ -154,12 +154,12 @@ describe('angular.bootstrap.media', function () {
         };
         $scope.$digest();
 
-        expect(element.find('comment').length).toBe(1);
-        expect(element.find('comment button[ng-click="removeComment(comment)"]').length).toBe(1);
+        expect(element.find('.media.comment').length).toBe(1);
+        expect(element.find('.media.comment button[ng-click="removeComment(comment)"]').length).toBe(1);
 
-        element.find('comment button[ng-click="removeComment(comment)"]').click();
+        element.find('.media.comment button[ng-click="removeComment(comment)"]').click();
 
-        expect(element.find('comment').length).toBe(0);
+        expect(element.find('.media.comment').length).toBe(0);
       });
     });
 
@@ -172,14 +172,14 @@ describe('angular.bootstrap.media', function () {
         };
         $scope.$digest();
 
-        expect(element.find('comment').length).toBe(1);
+        expect(element.find('.media.comment').length).toBe(1);
 
         expect(element.find('button[ng-click="displayPreviousComments()"]').length).toBe(1);
         element.find('button[ng-click="displayPreviousComments()"]').click();
 
-        expect(element.find('comment').length).toBe(2);
-        expect(element.find('comment:eq(0) .media-body').text()).toMatch(/dummy message 1/);
-        expect(element.find('comment:eq(1) .media-body').text()).toMatch(/dummy message 2/);
+        expect(element.find('.media.comment').length).toBe(2);
+        expect(element.find('.media.comment:eq(0) .media-body').text()).toMatch(/dummy message 1/);
+        expect(element.find('.media.comment:eq(1) .media-body').text()).toMatch(/dummy message 2/);
       });
     });
 

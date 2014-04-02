@@ -63,6 +63,7 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
 .directive('media', function() {
   return {
     restrict: 'E',
+    replace: true,
     scope: {
       currentUser: '=',
       media: '=',
@@ -117,6 +118,7 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
 .directive('comment', function() {
   return {
     restrict: 'E',
+    replace: true,
     scope: {
       currentUser: '=',
       media: '=',
