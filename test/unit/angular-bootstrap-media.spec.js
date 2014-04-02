@@ -31,7 +31,7 @@ describe('angular.bootstrap.media', function () {
     beforeEach(inject(function($rootScope, $compile) {
       $scope = $rootScope;
       $scope.currentUser = { _id: 'user-id' };
-      element = $compile('<media media="media" current-user="currentUser" delete-label="Supprimer le media"></media>')($scope);
+      element = $compile('<media media="media" current-user="currentUser" delete-label="Supprimer le media" default-gravatar-image="monsterid"></media>')($scope);
     }));
 
     it('create a media component', function() {
@@ -51,9 +51,25 @@ describe('angular.bootstrap.media', function () {
       expect(element.find('.media.comment form[ng-submit="comment()"]').length).toBe(1);
       expect(element.find('.media.comment input[type="submit"]').length).toBe(1);
       // check gravatars presence
-      expect(element.find('gravatar').length).toBe(2);
+      expect(element.find('img').length).toBe(2);
+      expect(element.find('img:eq(0)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
+      expect(element.find('img:eq(1)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
       // no comments
       expect(element.find('comment').length).toBe(0);
+      // no one like
+      expect(element.find('.media-num-likes').text().trim()).toBe('0');
+    });
+
+    it('create a media component with one comment', function() {
+      $scope.media = createMockMedia('media-id', 'dummy text', [], [createMockComment('comment-id', 'dummy message')]);
+      $scope.$digest();
+      // check gravatars presence
+      expect(element.find('img').length).toBe(3);
+      expect(element.find('img:eq(0)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
+      expect(element.find('img:eq(1)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
+      expect(element.find('img:eq(2)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
+      // no comments
+      expect(element.find('comment').length).toBe(1);
       // no one like
       expect(element.find('.media-num-likes').text().trim()).toBe('0');
     });
@@ -189,7 +205,7 @@ describe('angular.bootstrap.media', function () {
     beforeEach(inject(function($rootScope, $compile) {
       $scope = $rootScope;
       $scope.currentUser = { _id: 'user-id' };
-      element = $compile('<comment comment="comment" current-user="currentUser" media="media" on-comment-remove="removeComment(comment)"></comment>')($scope);
+      element = $compile('<comment comment="comment" current-user="currentUser" media="media" on-comment-remove="removeComment(comment)" default-gravatar-image="monsterid"></comment>')($scope);
     }));
 
     it('create a comment', function(){
@@ -204,7 +220,8 @@ describe('angular.bootstrap.media', function () {
       expect(element.find('button[ng-click="unlikeComment()"]').length).toBe(1);
       expect(element.find('button[ng-click="removeComment(comment)"]').length).toBe(1);
       // check gravatars presence
-      expect(element.find('gravatar').length).toBe(1);
+      expect(element.find('img').length).toBe(1);
+      expect(element.find('img:eq(0)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
       // no one like
       expect(element.find('.comment-num-likes').length).toBe(1);
       expect(element.find('.comment-num-likes:eq(0)').text().trim()).toBe('0');

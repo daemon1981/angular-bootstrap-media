@@ -1,8 +1,8 @@
-/*! angular-bootstrap-media - v0.0.6 - 2014-04-01
+/*! angular-bootstrap-media - v0.0.6 - 2014-04-02
  * Copyright (c) 2014 Damien Saillard <dam.saillard@gmail.com> (http://damien-saillard.fr/);
  * Licensed 
  */
-angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates'])
+angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 'angular.simple.gravatar'])
 
 .controller('MediaController', ['$scope', function($scope){
   var updateSuccess = function(result) {
@@ -71,6 +71,7 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates'])
       currentUser: '=',
       media: '=',
       'deleteLabel': '@',
+      'defaultGravatarImage': '@',
       'editMedia': '&onMediaEdit',
       'removeMedia': '&onMediaRemove'
     },
@@ -124,6 +125,7 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates'])
       currentUser: '=',
       media: '=',
       comment: '=',
+      'defaultGravatarImage': '@',
       'removeComment': '&onCommentRemove'
     },
     templateUrl: 'comment.tpl.html',
@@ -137,7 +139,7 @@ angular.module("comment.tpl.html", []).run(["$templateCache", function($template
   $templateCache.put("comment.tpl.html",
     "<div class=\"media comment\">\n" +
     "    <a class=\"pull-left\" href=\"#\">\n" +
-    "        <gravatar email=\"comment.creator.email\" size=\"30\" class=\"img-polaroid pull-right\"></gravatar>\n" +
+    "        <gravatar email=\"comment.creator.email\" size=\"30\" class=\"img-polaroid pull-right\" default-image=\"defaultGravatarImage\"></gravatar>\n" +
     "    </a>\n" +
     "    <div class=\"media-body\">\n" +
     "        {{comment.message}}\n" +
@@ -157,7 +159,7 @@ angular.module("media.tpl.html", []).run(["$templateCache", function($templateCa
   $templateCache.put("media.tpl.html",
     "<div class=\"media\">\n" +
     "    <a class=\"pull-left\" href=\"#\">\n" +
-    "        <gravatar email=\"media.creator.email\" size=\"30\" class=\"img-polaroid pull-right\"></gravatar>\n" +
+    "        <gravatar email=\"media.creator.email\" size=\"30\" class=\"img-polaroid pull-right\" default-image=\"defaultGravatarImage\"></gravatar>\n" +
     "    </a>\n" +
     "    <div class=\"media-body\">\n" +
     "        <div>{{media.text}}</div>\n" +
@@ -175,10 +177,10 @@ angular.module("media.tpl.html", []).run(["$templateCache", function($templateCa
     "        <div>\n" +
     "            <button type=\"button\" class=\"btn btn-link\" ng-click=\"displayPreviousComments()\">Voir les commentaires précédents</button>\n" +
     "        </div>\n" +
-    "        <comment class=\"comment\" comment=\"comment\" media=\"media\" current-user=\"currentUser\" ng-repeat=\"comment in media.comments\" on-comment-remove=\"removeComment(comment)\"></comment>\n" +
+    "        <comment class=\"comment\" comment=\"comment\" media=\"media\" current-user=\"currentUser\" ng-repeat=\"comment in media.comments\" on-comment-remove=\"removeComment(comment)\" default-gravatar-image=\"{{defaultGravatarImage}}\"></comment>\n" +
     "        <div class=\"media comment\">\n" +
     "            <a class=\"pull-left\" href=\"#\">\n" +
-    "                <gravatar email=\"user.email\" size=\"30\" class=\"img-polaroid pull-right\"></gravatar>\n" +
+    "                <gravatar email=\"user.email\" size=\"30\" class=\"img-polaroid pull-right\" default-image=\"defaultGravatarImage\"></gravatar>\n" +
     "            </a>\n" +
     "            <div class=\"media-body\">\n" +
     "                <form ng-submit=\"comment()\">\n" +

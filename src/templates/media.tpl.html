@@ -1,6 +1,6 @@
 <div class="media">
     <a class="pull-left" href="#">
-        <gravatar email="media.creator.email" size="30" class="img-polaroid pull-right"></gravatar>
+        <gravatar email="media.creator.email" size="30" class="img-polaroid pull-right" default-image="defaultGravatarImage"></gravatar>
     </a>
     <div class="media-body">
         <div>{{media.text}}</div>
@@ -18,10 +18,10 @@
         <div>
             <button type="button" class="btn btn-link" ng-click="displayPreviousComments()">Voir les commentaires précédents</button>
         </div>
-        <comment class="comment" comment="comment" media="media" current-user="currentUser" ng-repeat="comment in media.comments" on-comment-remove="removeComment(comment)"></comment>
+        <comment class="comment" comment="comment" media="media" current-user="currentUser" ng-repeat="comment in media.comments" on-comment-remove="removeComment(comment)" default-gravatar-image="{{defaultGravatarImage}}"></comment>
         <div class="media comment">
             <a class="pull-left" href="#">
-                <gravatar email="user.email" size="30" class="img-polaroid pull-right"></gravatar>
+                <gravatar email="user.email" size="30" class="img-polaroid pull-right" default-image="defaultGravatarImage"></gravatar>
             </a>
             <div class="media-body">
                 <form ng-submit="comment()">

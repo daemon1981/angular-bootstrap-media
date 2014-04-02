@@ -1,4 +1,4 @@
-angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates'])
+angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 'angular.simple.gravatar'])
 
 .controller('MediaController', ['$scope', function($scope){
   var updateSuccess = function(result) {
@@ -67,6 +67,7 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates'])
       currentUser: '=',
       media: '=',
       'deleteLabel': '@',
+      'defaultGravatarImage': '@',
       'editMedia': '&onMediaEdit',
       'removeMedia': '&onMediaRemove'
     },
@@ -120,6 +121,7 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates'])
       currentUser: '=',
       media: '=',
       comment: '=',
+      'defaultGravatarImage': '@',
       'removeComment': '&onCommentRemove'
     },
     templateUrl: 'comment.tpl.html',

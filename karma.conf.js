@@ -10,6 +10,7 @@ module.exports = function(config) {
       'bower_components/jquery/dist/jquery.js',
       'bower_components/bootstrap/dist/js/bootstrap.js',
       'bower_components/angular/angular.js',
+      'bower_components/angular-simple-gravatar/dist/angular-simple-gravatar.js',
       'bower_components/angular-mocks/angular-mocks.js',
       'dist/angular-bootstrap-media.js',
       'test/unit/**/*.js'
