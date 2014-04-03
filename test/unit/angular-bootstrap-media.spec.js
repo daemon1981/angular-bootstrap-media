@@ -1,22 +1,26 @@
 describe('angular.bootstrap.media', function () {
   var $scope, element;
 
-  function createMockComment(id, message, likes, creator) {
+  function createMockComment(id, message, likes, creatorId) {
     return {
       _id: id,
       message: message,
       likes: likes,
-      creator: creator
+      creator: {
+        _id: creatorId
+      }
     };
   }
 
-  function createMockMedia(id, text, likes, comments, creator) {
+  function createMockMedia(id, text, likes, comments, creatorId) {
     var media = {
       _id: id,
       text: text,
       likes: likes,
       comments: comments,
-      creator: creator
+      creator: {
+        _id: creatorId
+      }
     };
 
     media.$id = function() { return media._id; };
