@@ -26,7 +26,7 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
   };
 
   $scope.ownMedia = function() {
-    return $scope.media.creator === $scope.currentUser._id;
+    return $scope.media.creator._id === $scope.currentUser._id;
   };
 
   $scope.comment = function() {
@@ -111,7 +111,7 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
   };
 
   $scope.ownComment = function() {
-    return $scope.comment.creator === $scope.currentUser._id;
+    return $scope.comment.creator._id === $scope.currentUser._id;
   };
 }])
 
