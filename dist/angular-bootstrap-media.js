@@ -1,8 +1,8 @@
-/*! angular-bootstrap-media - v0.0.8 - 2014-04-02
+/*! angular-bootstrap-media - v0.0.8 - 2014-04-03
  * Copyright (c) 2014 Damien Saillard <dam.saillard@gmail.com> (http://damien-saillard.fr/);
  * Licensed 
  */
-angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 'angular.simple.gravatar'])
+angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 'angular.simple.gravatar', 'ngSanitize'])
 
 .controller('MediaController', ['$scope', function($scope){
   var updateSuccess = function(result) {
@@ -164,7 +164,7 @@ angular.module("media.tpl.html", []).run(["$templateCache", function($templateCa
     "        <gravatar email=\"media.creator.email\" size=\"30\" class=\"img-polaroid pull-right\" default-image=\"defaultGravatarImage\"></gravatar>\n" +
     "    </a>\n" +
     "    <div class=\"media-body\">\n" +
-    "        <div>{{media.text}}</div>\n" +
+    "        <div ng-bind-html=\"media.text\"></div>\n" +
     "        <div>\n" +
     "            <button type=\"button\" class=\"btn btn-danger btn-xs\" ng-show=\"ownMedia()\" ng-click=\"removeMedia(media)\">{{deleteLabel}}</button>\n" +
     "            &nbsp;&nbsp;\n" +

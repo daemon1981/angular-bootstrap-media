@@ -25,6 +25,7 @@ bower install angular-bootstrap-media
 <link href="bootstrap.min.css" rel="stylesheet">
 ...
 <script src="angular.min.js"></script>
+<script src="angular-sanitize.min.js"></script>
 <script src="bootstrap.min.js"></script>
 <script src="angular-simple-gravatar.js"></script>
 <script src="angular-bootstrap-media.js"></script>

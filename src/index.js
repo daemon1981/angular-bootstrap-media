@@ -1,4 +1,4 @@
-angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 'angular.simple.gravatar'])
+angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 'angular.simple.gravatar', 'ngSanitize'])
 
 .controller('MediaController', ['$scope', function($scope){
   var updateSuccess = function(result) {
