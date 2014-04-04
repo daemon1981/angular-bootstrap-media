@@ -14,7 +14,7 @@ Bootstrap CSS (tested with version 3.0.3). This version of the library (0.10.0) 
 ## Installation
 
 ```bash
-bower install angular-bootstrap-media
+$ bower install angular-bootstrap-media
 ```
 
 ## Use
