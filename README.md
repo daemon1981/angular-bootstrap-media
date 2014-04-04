@@ -13,15 +13,15 @@ Bootstrap CSS (tested with version 3.0.3). This version of the library (0.10.0) 
 
 ## Installation
 
-```
-bower install angular-bootstrap-media
+```bash
+$ bower install angular-bootstrap-media
 ```
 
 ## Use
 
 ### Include in your header
 
-```
+```html
 <link href="bootstrap.min.css" rel="stylesheet">
 ...
 <script src="angular.min.js"></script>
@@ -33,13 +33,13 @@ bower install angular-bootstrap-media
 
 ### Include module in your angular module
 
-```
+```javascript
 angular.module('myModule', ['angular-bootstrap-media']);
 ```
 
 ### Implementing in template
 
-```
+```html
 <media
     media="media"
     current-user="currentUser"
@@ -52,7 +52,7 @@ angular.module('myModule', ['angular-bootstrap-media']);
 
 ### minimalist structure of the media and the currentUser
 
-```
+```javascript
 var media = {
   text:  'dummy test',
   likes: [],
@@ -71,7 +71,7 @@ var media = {
 };
 ```
 
-```
+```javascript
 var currentUser = {
   email: 'dummy@email.com',
 }
