@@ -81,7 +81,7 @@ var currentUser = {
 
 ### Development
 #### Prepare your environment
-* Install [Node.js](http://nodejs.org/) and NPM (should come with)
+* Install [Node.js > 0.10](http://nodejs.org/) and NPM (should come with)
 * Install global dev dependencies: `npm install -g grunt-cli`
 * Install local dev dependencies: `npm install`
 

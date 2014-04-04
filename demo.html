@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="stylesheet" type="text/css" href="/static/bower_components/bootstrap/dist/css/bootstrap.css"/>
+  <link rel="stylesheet" type="text/css" href="/static/bower_components/bootstrap/dist/css/bootstrap-theme.css"/>
+  <link rel="shortcut icon" type="image/png"href="http://eleven-labs.com/ui/img/favicon-eleven.png">
+  <title>Angular Bootstrap Media Demo</title>
+  <script type="text/javascript" src="/static/bower_components/bootstrap/dist/js/bootstrap.js"></script>
+  <script type="text/javascript" src="/static/bower_components/angular/angular.js"></script>
+  <script type="text/javascript" src="/static/bower_components/angular-simple-gravatar/angular-simple-gravatar.js"></script>
+  <script type="text/javascript" src="/static/dist/angular-bootstrap-media.js"></script>
+  <!-- Just for debugging purposes. Don't actually copy this line! -->
+  <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+  <![endif]-->
+
+  <script type="text/javascript">
+    angular.module('posts', [
+      'ngRoute',
+      'resources.posts',
+      'angular.bootstrap.media'
+    ])
+    
+    .config(['$routeProvider', 'securityAuthorizationProvider', function ($routeProvider, securityAuthorizationProvider) {
+      $routeProvider.when('/posts', {
+        templateUrl:'controllers/posts/templates/list.tpl.html',
+        controller:'PostsViewCtrl',
+        resolve:{
+          posts:['Posts', function (Posts) {
+            return Posts.getList(10, 4);
+          }],
+          authenticatedUser: securityAuthorizationProvider.requireAuthenticatedUser
+        }
+      });
+    }])
+    
+    .controller('PostsViewCtrl', ['$scope', 'posts', 'Posts', 'security', function ($scope, posts, Posts, security) {
+      $scope.posts = posts;
+    
+      $scope.post = null;
+      $scope.text = '';
+      $scope.allPostsDisplayed = false;
+      $scope.currentUser = security.currentUser;
+    
+      $scope.isEditingPost = function() {
+        return $scope.post !== null;
+      };
+    
+      $scope.isEditingNewPost = function() {
+        return $scope.isEditingPost() && !$scope.post.$id();
+      };
+    
+      var saveSuccess = function(result) {
+        $scope.posts.unshift(result);
+        $scope.text = '';
+        $scope.post = null;
+      };
+    
+      var updateSuccess = function() {
+        $scope.text = '';
+        $scope.post = null;
+      };
+    
+      var failsRequest = function() {
+        console.log('error');
+      };
+    
+      $scope.initNewPost = function() {
+        $scope.post = new Posts();
+        $scope.text = '';
+      };
+    
+      $scope.savePost = function() {
+        $scope.post.text = $scope.text;
+        if ($scope.post.$id()) {
+          return $scope.post.$update(updateSuccess, failsRequest);
+        } else {
+          return $scope.post.$save(saveSuccess, failsRequest);
+        }
+      };
+    
+      $scope.editPost = function(post) {
+        $scope.post = post;
+        $scope.text = post.text;
+      };
+    
+      $scope.closePost = function() {
+        $scope.text = '';
+        $scope.post = null;
+      };
+    
+      $scope.removePost = function(postToRemove) {
+        postToRemove.$remove(
+          function removeSuccess(){
+            $scope.posts = $scope.posts.filter(function removePost(post){
+              return post.$id() !== postToRemove.$id();
+            });
+          },
+          failsRequest
+        );
+      };
+    
+      $scope.getOlderPosts = function(numPosts, maxNumLastPostComments) {
+        var olderPostDisplayed = $scope.posts[$scope.posts.length - 1];
+    
+        olderPostDisplayed.$getOlderPosts(
+          numPosts,
+          maxNumLastPostComments,
+          function successRequest(olderPosts) {
+            var numOlderPosts = Object.keys(olderPosts).length;
+            if (numOlderPosts < numPosts) {
+              $scope.allPostsDisplayed = true;
+            }
+            for (var i = 0; i < numOlderPosts; i++) {
+              $scope.posts.push(new Posts(olderPosts[i]));
+            }
+          },
+          failsRequest
+        );
+      };
+    }]);
+  </script>
+</head>
+
+<body ng-controller="AppCtrl">
+  <div ng-view class="container"></div>
+</body>
+</html>
