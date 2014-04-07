@@ -1,8 +1,8 @@
 angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 'angular.simple.gravatar', 'ngSanitize'])
 
 .controller('MediaController', ['$scope', function($scope){
-  var updateSuccess = function(result) {
-    $scope.media = result;
+  var updateSuccess = function(mediaUpdated) {
+    $scope.media = mediaUpdated;
   };
 
   var failsRequest = function() {
@@ -33,9 +33,9 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
     if ($scope.message) {
       $scope.media.$addComment(
         $scope.message,
-        function success(result) {
+        function success(mediaUpdated) {
           $scope.message = '';
-          updateSuccess(result);
+          updateSuccess(mediaUpdated);
         },
         failsRequest
       );
@@ -65,12 +65,13 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
     restrict: 'E',
     replace: true,
     scope: {
-      currentUser: '=',
-      media: '=',
-      'deleteLabel': '@',
+      currentUser:            '=',
+      media:                  '=',
+      maxLastComments:        '=',
+      'deleteLabel':          '@',
       'defaultGravatarImage': '@',
-      'editMedia': '&onMediaEdit',
-      'removeMedia': '&onMediaRemove'
+      'editMedia':            '&onMediaEdit',
+      'removeMedia':          '&onMediaRemove'
     },
     templateUrl: 'media.tpl.html',
     controller: 'MediaController'
@@ -85,8 +86,8 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
         function success(comment) {
           $scope.comment = comment;
         },
-        function error(result) {
-          console.log(result);
+        function error(message) {
+          console.log(message);
         }
       );
     };
@@ -120,11 +121,11 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
     restrict: 'E',
     replace: true,
     scope: {
-      currentUser: '=',
-      media: '=',
-      comment: '=',
+      currentUser:            '=',
+      media:                  '=',
+      comment:                '=',
       'defaultGravatarImage': '@',
-      'removeComment': '&onCommentRemove'
+      'removeComment':        '&onCommentRemove'
     },
     templateUrl: 'comment.tpl.html',
     controller: 'CommentController'

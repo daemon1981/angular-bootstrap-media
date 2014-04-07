@@ -58,23 +58,18 @@ var media = {
   likes: [],
   comments: [
     {
+      _id:     'dummy comment id'
       message: 'dummy message',
-      likes: [],
-      creator: {
-        email: 'dummy@email.com'
-      }
+      likes:   [],
+      creator: { _id: 'dummy user id' }
     }
   ],
-  creator: {
-    email: 'dummy@email.com'
-  }
+  creator: { _id: 'dummy user id' }
 };
 ```
 
 ```javascript
-var currentUser = {
-  email: 'dummy@email.com',
-}
+var currentUser = { _id: 'dummy user id' };
 ```
 
 ## Contributing to the project

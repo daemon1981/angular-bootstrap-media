@@ -35,7 +35,14 @@ describe('angular.bootstrap.media', function () {
     beforeEach(inject(function($rootScope, $compile) {
       $scope = $rootScope;
       $scope.currentUser = { _id: 'user-id' };
-      element = $compile('<media media="media" current-user="currentUser" delete-label="Supprimer le media" default-gravatar-image="monsterid"></media>')($scope);
+      var template = '<media ' +
+        'media="media" ' +
+        'maxLastComments="10" ' +
+        'current-user="currentUser" ' +
+        'delete-label="Supprimer le media" ' +
+        'default-gravatar-image="monsterid">' +
+        '</media>';
+      element = $compile(template)($scope);
     }));
 
     it('create a media component', function() {
