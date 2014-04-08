@@ -34,7 +34,7 @@
     "grunt-contrib-concat": "v0.1.2",
     "grunt-contrib-uglify": "v0.4.0",
     "grunt-karma": "v0.8.2",
-    "grunt-html2js": "~0.1.0",
+    "grunt-html2js": "0.1.0",
     "grunt-contrib-watch": "v0.5.3",
     "karma": "v0.12.1",
     "karma-jasmine": "v0.2.2",

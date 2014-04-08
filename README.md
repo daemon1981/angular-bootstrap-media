@@ -58,30 +58,25 @@ var media = {
   likes: [],
   comments: [
     {
+      _id:     'dummy comment id'
       message: 'dummy message',
-      likes: [],
-      creator: {
-        email: 'dummy@email.com'
-      }
+      likes:   [],
+      creator: { _id: 'dummy user id' }
     }
   ],
-  creator: {
-    email: 'dummy@email.com'
-  }
+  creator: { _id: 'dummy user id' }
 };
 ```
 
 ```javascript
-var currentUser = {
-  email: 'dummy@email.com',
-}
+var currentUser = { _id: 'dummy user id' };
 ```
 
 ## Contributing to the project
 
 ### Development
 #### Prepare your environment
-* Install [Node.js](http://nodejs.org/) and NPM (should come with)
+* Install [Node.js > 0.10](http://nodejs.org/) and NPM (should come with)
 * Install global dev dependencies: `npm install -g grunt-cli`
 * Install local dev dependencies: `npm install`
 
