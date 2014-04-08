@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="mediaDemo">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,6 +12,7 @@
   <script type="text/javascript" src="./bower_components/jquery/dist/jquery.js"></script>
   <script type="text/javascript" src="./bower_components/bootstrap/dist/js/bootstrap.js"></script>
   <script type="text/javascript" src="./bower_components/angular/angular.js"></script>
+  <script type="text/javascript" src="./bower_components/angular-sanitize/angular-sanitize.js"></script>
   <script type="text/javascript" src="./bower_components/angular-simple-gravatar/dist/angular-simple-gravatar.js"></script>
   <script type="text/javascript" src="./dist/angular-bootstrap-media.js"></script>
   <!-- Just for debugging purposes. Don't actually copy this line! -->
@@ -24,7 +25,7 @@
   <![endif]-->
 
   <script type="text/javascript">
-    var demoMedia = {
+    var demoMediaData = {
       text:  'dummy test',
       likes: [],
       comments: [
@@ -41,30 +42,34 @@
       }
     };
 
-    angular.module('mediaResource', []).factory('MediaResource', [function () {
+    angular.module('mediaResource', []).factory('Media', [function () {
+      var Media = function (data) {
+        angular.extend(this, data);
+      };
+
       Media.prototype.$addLike = function (success) {
         var userId = Date.now();
-        demoMedia.likes.push(userId);
-        success(demoMedia);
+        this.likes.push(userId);
+        success(this);
       };
 
       Media.prototype.$removeLike = function (success) {
-        demoMedia.likes.pop();
-        success(demoMedia);
+        this.likes.pop();
+        success(this);
       };
 
       Media.prototype.$addComment = function (message, success) {
-        demoMedia.comments.push({
+        this.comments.push({
           message: message,
           likes:   [],
           creator: { _id: 'dummy user id' }
         });
-        success(demoMedia);
+        success(this);
       };
 
       Media.prototype.$removeComment = function (commentId, success) {
-        demoMedia.comments.pop();
-        success(demoMedia);
+        this.comments.pop();
+        success(this);
       };
 
       Media.prototype.$getPreviousComments = function (numComments, maxNumLast, success) {
@@ -91,13 +96,13 @@
 
       Media.prototype.$addLikeToComment = function (commentId, success) {
         var userId = Date.now();
-        comment.push(userId);
-        success(comment);
+        this.comments[this.comments.length - 1].likes.push(userId);
+        success(this.comments[this.comments.length - 1]);
       };
 
       Media.prototype.$removeLikeFromComment = function (commentId, success) {
-        comment.pop();
-        success(comment);
+        this.comments.pop();
+        success();
       };
 
       return Media;
@@ -108,8 +113,8 @@
       'angular.bootstrap.media'
     ])
     
-    .controller('MediaDemoController', ['$scope', 'MediaResource', function ($scope, MediaResource) {
-      $scope.media = demoMedia;
+    .controller('MediaDemoController', ['$scope', 'Media', function ($scope, Media) {
+      $scope.media = new Media(demoMediaData);
       $scope.currentUser = { _id: 'dummy user id' };
 
       $scope.editMedia = function(media) {
