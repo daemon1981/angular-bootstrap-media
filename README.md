@@ -22,13 +22,15 @@ $ bower install angular-bootstrap-media
 ### Include in your header
 
 ```html
-<link href="bootstrap.min.css" rel="stylesheet">
+<link type="text/css" href="bootstrap.min.css"   rel="stylesheet">
+<link type="text/css" href="bootstrap-theme.css" rel="stylesheet"/>
 ...
-<script src="angular.min.js"></script>
-<script src="angular-sanitize.min.js"></script>
-<script src="bootstrap.min.js"></script>
-<script src="angular-simple-gravatar.js"></script>
-<script src="angular-bootstrap-media.js"></script>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="bootstrap.min.js"></script>
+<script type="text/javascript" src="angular.min.js"></script>
+<script type="text/javascript" src="angular-sanitize.min.js"></script>
+<script type="text/javascript" src="angular-simple-gravatar.js"></script>
+<script type="text/javascript" src="angular-bootstrap-media.js"></script>
 ```
 
 ### Include module in your angular module

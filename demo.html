@@ -9,12 +9,8 @@
   <link rel="stylesheet" type="text/css" href="./bower_components/bootstrap/dist/css/bootstrap.css"/>
   <link rel="stylesheet" type="text/css" href="./bower_components/bootstrap/dist/css/bootstrap-theme.css"/>
   <title>Angular Bootstrap Media Demo</title>
-  <script type="text/javascript" src="./bower_components/jquery/dist/jquery.js"></script>
-  <script type="text/javascript" src="./bower_components/bootstrap/dist/js/bootstrap.js"></script>
-  <script type="text/javascript" src="./bower_components/angular/angular.js"></script>
-  <script type="text/javascript" src="./bower_components/angular-sanitize/angular-sanitize.js"></script>
-  <script type="text/javascript" src="./bower_components/angular-simple-gravatar/dist/angular-simple-gravatar.js"></script>
-  <script type="text/javascript" src="./dist/angular-bootstrap-media.js"></script>
+  <script type="text/javascript" src="./demo-lib/lib.js"></script>
+  <script type="text/javascript" src="./demo-lib/angular-bootstrap-media.js"></script>
   <!-- Just for debugging purposes. Don't actually copy this line! -->
   <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
 
@@ -27,11 +23,11 @@
   <script type="text/javascript">
     var demoMediaData = {
       text:  'dummy test',
-      likes: [],
+      likes: ['dummy user id', 'dummy user id'],
       comments: [
         {
           message: 'dummy message',
-          likes: [],
+          likes: ['dummy user id', 'dummy user id', 'dummy user id'],
           creator: {
             email: 'dummy@email.com'
           }
@@ -110,12 +106,14 @@
 
     angular.module('mediaDemo', [
       'mediaResource',
-      'angular.bootstrap.media'
+      'vendor-templates',
+      'angular.bootstrap.media',
+      'ui.bootstrap.tooltip'
     ])
     
     .controller('MediaDemoController', ['$scope', 'Media', function ($scope, Media) {
       $scope.media = new Media(demoMediaData);
-      $scope.currentUser = { _id: 'dummy user id' };
+      $scope.currentUser = { _id: 'current dummy user id' };
 
       $scope.editMedia = function(media) {
         alert('Event edit media ' + media._id);
