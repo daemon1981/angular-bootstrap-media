@@ -29,7 +29,7 @@ module.exports = function (grunt) {
   // Project configuration.
   grunt.initConfig({
     distdir: 'dist',
-    demodirlib: 'demo-lib',
+    demodir: 'demo/vendor',
     pkg: grunt.file.readJSON('package.json'),
     banner:
     '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>\n' +
@@ -39,7 +39,7 @@ module.exports = function (grunt) {
     src: {
       js:    ['src/**/*.js'],
       jsTpl: ['<%= distdir %>/templates.js'],
-      vendorTpl: ['<%= demodirlib %>/vendor-templates.js'],
+      vendorTpl: ['<%= demodir %>/vendor-templates.js'],
       specs: ['test/**/*.spec.js'],
       tpl: {
         app: ['src/**/*.tpl.html'],
@@ -48,7 +48,7 @@ module.exports = function (grunt) {
     },
     clean: {
       build: ['<%= distdir %>/*'],
-      vendorBuild: ['<%= demodirlib %>/*'],
+      demo: ['<%= demodir %>/*'],
       build_templates: ['<%= distdir %>/templates.js']
     },
     karma: {
@@ -69,7 +69,7 @@ module.exports = function (grunt) {
           base: 'bower_components/angular-ui-bootstrap'
         },
         src: ['<%= src.tpl.vendor %>'],
-        dest: '<%= demodirlib %>/vendor-templates.js',
+        dest: '<%= demodir %>/vendor-templates.js',
         module: 'vendor-templates'
       }
     },
@@ -81,7 +81,7 @@ module.exports = function (grunt) {
         src:['<%= src.js %>', '<%= src.jsTpl %>'],
         dest:'<%= distdir %>/<%= pkg.name %>.js'
       },
-      vendor: {
+      vendorJs: {
         src:[
           'bower_components/jquery/dist/jquery.js',
           'bower_components/bootstrap/dist/js/bootstrap.js',
@@ -93,8 +93,8 @@ module.exports = function (grunt) {
           'bower_components/angular-ui-bootstrap/src/position/position.js',
           'bower_components/angular-ui-bootstrap/src/tooltip/tooltip.js',
         ],
-        dest: '<%= demodirlib %>/lib.js'
-      },
+        dest: '<%= demodir %>/lib.js'
+      }
     },
     uglify: {
       dist:{
@@ -108,7 +108,8 @@ module.exports = function (grunt) {
     copy: {
       demo: {
         files: [
-          { dest: '<%= demodirlib %>', src : '**', expand: true, cwd: '<%= distdir %>' }
+          { dest: '<%= demodir %>', src : '**', expand: true, cwd: '<%= distdir %>' },
+          { dest: '<%= demodir %>', src : 'bootstrap/**', expand: true, cwd: 'bower_components' }
         ]
       }
     },

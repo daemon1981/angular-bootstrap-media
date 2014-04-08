@@ -6,11 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Angular Bootstrap Media Demo">
   <meta name="author" content="Damien Saillard">
-  <link rel="stylesheet" type="text/css" href="./bower_components/bootstrap/dist/css/bootstrap.css"/>
-  <link rel="stylesheet" type="text/css" href="./bower_components/bootstrap/dist/css/bootstrap-theme.css"/>
+  <link rel="stylesheet" type="text/css" href="./vendor/bootstrap/dist/css/bootstrap.css"/>
+  <link rel="stylesheet" type="text/css" href="./vendor/bootstrap/dist/css/bootstrap-theme.css"/>
   <title>Angular Bootstrap Media Demo</title>
-  <script type="text/javascript" src="./demo-lib/lib.js"></script>
-  <script type="text/javascript" src="./demo-lib/angular-bootstrap-media.js"></script>
+  <script type="text/javascript" src="./vendor/lib.js"></script>
+  <script type="text/javascript" src="./vendor/angular-bootstrap-media.js"></script>
   <!-- Just for debugging purposes. Don't actually copy this line! -->
   <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
 
@@ -52,6 +52,10 @@
       Media.prototype.$removeLike = function (success) {
         this.likes.pop();
         success(this);
+      };
+
+      Media.prototype.$getLikers = function (success) {
+        success(['Dummy Name', 'Dummy Name', 'Dummy Name', 'Dummy Name', 'Dummy Name']);
       };
 
       Media.prototype.$addComment = function (message, success) {

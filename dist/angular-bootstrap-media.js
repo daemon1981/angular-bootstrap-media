@@ -5,6 +5,8 @@
 angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 'angular.simple.gravatar', 'ngSanitize'])
 
 .controller('MediaController', ['$scope', function($scope){
+  $scope.media.likers = 'Chargement...';
+
   var updateSuccess = function(mediaUpdated) {
     $scope.media = mediaUpdated;
   };
@@ -27,6 +29,15 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
 
   $scope.unlike = function() {
     $scope.media.$removeLike(updateSuccess, failsRequest);
+  };
+
+  $scope.getLikers = function() {
+    $scope.media.$getLikers(
+      function(likers) {
+        $scope.media.likers = likers.join(', ');
+      },
+      failsRequest
+    );
   };
 
   $scope.ownMedia = function() {
@@ -169,7 +180,7 @@ angular.module("media.tpl.html", []).run(["$templateCache", function($templateCa
     "        <div>" +
     "            <button type=\"button\" class=\"btn btn-danger btn-xs\" ng-show=\"ownMedia()\" ng-click=\"removeMedia(media)\">{{deleteLabel}}</button>" +
     "            &nbsp;&nbsp;" +
-    "            <span class=\"badge ng-binding media-num-likes\" tooltip=\"Hello!\">{{media.likes.length}} <span class=\"glyphicon glyphicon-thumbs-up\"></span></span>" +
+    "            <span class=\"badge ng-binding media-num-likes\" tooltip=\"media.likers\" ng-mouseover=\"\">{{media.likes.length}} <span class=\"glyphicon glyphicon-thumbs-up\"></span></span>" +
     "            <button type=\"button\" class=\"btn btn-link\" ng-show=\"!userInArray(media.likes)\" ng-click=\"like()\">Like</button>" +
     "            <button type=\"button\" class=\"btn btn-link\" ng-show=\"userInArray(media.likes)\" ng-click=\"unlike()\">Unlike</button>" +
     "            <button type=\"button\" class=\"btn btn-link\" ng-click=\"focusMediaCommentArea($event)\">Comment</button>" +

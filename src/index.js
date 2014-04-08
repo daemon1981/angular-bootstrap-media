@@ -1,6 +1,8 @@
 angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 'angular.simple.gravatar', 'ngSanitize'])
 
 .controller('MediaController', ['$scope', function($scope){
+  $scope.media.likers = 'Chargement...';
+
   var updateSuccess = function(mediaUpdated) {
     $scope.media = mediaUpdated;
   };
@@ -23,6 +25,15 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
 
   $scope.unlike = function() {
     $scope.media.$removeLike(updateSuccess, failsRequest);
+  };
+
+  $scope.getLikers = function() {
+    $scope.media.$getLikers(
+      function(likers) {
+        $scope.media.likers = likers.join(', ');
+      },
+      failsRequest
+    );
   };
 
   $scope.ownMedia = function() {
