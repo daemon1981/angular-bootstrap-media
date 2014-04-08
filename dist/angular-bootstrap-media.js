@@ -32,9 +32,13 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
   };
 
   $scope.getLikers = function() {
+    if (typeof $scope.media.likers !== 'string') {
+      return $scope.media.likers;
+    }
+
     $scope.media.$getLikers(
       function(likers) {
-        $scope.media.likers = likers.join(', ');
+        $scope.media.likers = likers.join('<br>');
       },
       failsRequest
     );
@@ -180,7 +184,7 @@ angular.module("media.tpl.html", []).run(["$templateCache", function($templateCa
     "        <div>" +
     "            <button type=\"button\" class=\"btn btn-danger btn-xs\" ng-show=\"ownMedia()\" ng-click=\"removeMedia(media)\">{{deleteLabel}}</button>" +
     "            &nbsp;&nbsp;" +
-    "            <span class=\"badge ng-binding media-num-likes\" tooltip=\"media.likers\" ng-mouseover=\"\">{{media.likes.length}} <span class=\"glyphicon glyphicon-thumbs-up\"></span></span>" +
+    "            <span class=\"badge ng-binding media-num-likes\" tooltip-html-unsafe=\"{{media.likers}}\" tooltip-placement=\"bottom\" ng-mouseover=\"getLikers()\">{{media.likes.length}} <span class=\"glyphicon glyphicon-thumbs-up\"></span></span>" +
     "            <button type=\"button\" class=\"btn btn-link\" ng-show=\"!userInArray(media.likes)\" ng-click=\"like()\">Like</button>" +
     "            <button type=\"button\" class=\"btn btn-link\" ng-show=\"userInArray(media.likes)\" ng-click=\"unlike()\">Unlike</button>" +
     "            <button type=\"button\" class=\"btn btn-link\" ng-click=\"focusMediaCommentArea($event)\">Comment</button>" +

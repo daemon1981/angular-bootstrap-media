@@ -28,9 +28,13 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
   };
 
   $scope.getLikers = function() {
+    if (typeof $scope.media.likers !== 'string') {
+      return $scope.media.likers;
+    }
+
     $scope.media.$getLikers(
       function(likers) {
-        $scope.media.likers = likers.join(', ');
+        $scope.media.likers = likers.join('<br>');
       },
       failsRequest
     );

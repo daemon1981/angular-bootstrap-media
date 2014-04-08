@@ -55,7 +55,12 @@
       };
 
       Media.prototype.$getLikers = function (success) {
-        success(['Dummy Name', 'Dummy Name', 'Dummy Name', 'Dummy Name', 'Dummy Name']);
+        setTimeout(
+          function(){
+            success(['Dummy Name', 'Dummy Name', 'Dummy Name', 'Dummy Name', 'Dummy Name']);
+          },
+          1000
+        );
       };
 
       Media.prototype.$addComment = function (message, success) {
