@@ -22,19 +22,41 @@
 
   <script type="text/javascript">
     var demoMediaData = {
+      _id: 1,
+      editable: true,
+      liked: true,
+      likesCount: 2,
       text:  'dummy test',
-      likes: ['dummy user id', 'dummy user id'],
+      dateCreation: new Date(),
       comments: [
         {
+          _id: 0,
+          editable: false,
+          liked: false,
+          likesCount: 3,
           message: 'dummy message',
-          likes: ['dummy user id', 'dummy user id', 'dummy user id'],
+          dateCreation: new Date(),
           creator: {
-            email: 'dummy@email.com'
+            _id:  2,
+            name: 'Dummy Name'
+          }
+        },
+        {
+          _id: 1,
+          editable: true,
+          liked: false,
+          likesCount: 1,
+          message: 'dummy message',
+          dateCreation: new Date(),
+          creator: {
+            _id:  1,
+            name: 'Dummy Name'
           }
         }
       ],
       creator: {
-        email: 'dummy@email.com'
+        _id:  1,
+        name: 'Dummy Name'
       }
     };
 
@@ -44,20 +66,21 @@
       };
 
       Media.prototype.$addLike = function (success) {
-        var userId = Date.now();
-        this.likes.push(userId);
+        this.liked = true;
+        this.likesCount++;
         success(this);
       };
 
       Media.prototype.$removeLike = function (success) {
-        this.likes.pop();
+        this.liked = false;
+        this.likesCount--;
         success(this);
       };
 
       Media.prototype.$getLikers = function (success) {
         setTimeout(
           function(){
-            success(['Dummy Name', 'Dummy Name', 'Dummy Name', 'Dummy Name', 'Dummy Name']);
+            success(['Dummy Name', 'Dummy Name']);
           },
           1000
         );
@@ -65,8 +88,8 @@
 
       Media.prototype.$addComment = function (message, success) {
         this.comments.push({
+          liked: false,
           message: message,
-          likes:   [],
           creator: { _id: 'dummy user id' }
         });
         success(this);
@@ -79,21 +102,20 @@
 
       Media.prototype.$getPreviousComments = function (numComments, maxNumLast, success) {
         success([{
+          _id: 3,
+          editable: false,
+          liked: false,
+          likesCount: 5,
+          dateCreation: new Date(),
           message: 'dummy message',
-          likes: [],
           creator: {
-            email: 'dummy@email.com'
+            _id:  1,
+            name: 'Dummy Name'
           }
         }]);
       };
 
-      var comment = {
-        message: 'dummy message',
-        likes: [],
-        creator: {
-          email: 'dummy@email.com'
-        }
-      };
+      var comment;
 
       Media.prototype.$getComment = function (commentId, success) {
         success(comment);
@@ -101,13 +123,26 @@
 
       Media.prototype.$addLikeToComment = function (commentId, success) {
         var userId = Date.now();
-        this.comments[this.comments.length - 1].likes.push(userId);
+        this.comments[this.comments.length - 1].liked = true;
+        this.comments[this.comments.length - 1].likesCount++;
+        comment = this.comments[this.comments.length - 1];
         success(this.comments[this.comments.length - 1]);
       };
 
       Media.prototype.$removeLikeFromComment = function (commentId, success) {
-        this.comments.pop();
+        this.comments[this.comments.length - 1].liked = false;
+        this.comments[this.comments.length - 1].likesCount--;
+        comment = this.comments[this.comments.length - 1];
         success();
+      };
+
+      Media.prototype.$getCommentLikers = function (commentId, success) {
+        setTimeout(
+          function(){
+            success(['Dummy Name', 'Dummy Name']);
+          },
+          1000
+        );
       };
 
       return Media;
@@ -125,11 +160,11 @@
       $scope.currentUser = { _id: 'current dummy user id' };
 
       $scope.editMedia = function(media) {
-        alert('Event edit media ' + media._id);
+        alert('Edit event media ' + media._id);
       };
 
       $scope.removeMedia = function(media) {
-        alert('Event edit media ' + media._id);
+        alert('Remove event media ' + media._id);
       };
     }]);
   </script>
@@ -139,7 +174,8 @@
   <div ng-controller="MediaDemoController">
     <media
         media="media"
-        current-user="currentUser"
+        creator-url-format="'/users/:id'"
+        max-last-comments="1"
         on-media-edit="editMedia(media)"
         on-media-remove="removeMedia(media)"
         delete-label="Supprimer le media"

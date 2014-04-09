@@ -1,7 +1,10 @@
 angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 'angular.simple.gravatar', 'ngSanitize'])
 
 .controller('MediaController', ['$scope', function($scope){
-  $scope.media.likers = 'Chargement...';
+  $scope.likersLoaded = false;
+  $scope.likersText = 'Chargement...';
+
+  $scope.creatorLink = $scope.creatorUrlFormat.replace(':id', $scope.media.creator._id);
 
   var updateSuccess = function(mediaUpdated) {
     $scope.media = mediaUpdated;
@@ -15,10 +18,6 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
     $($event.currentTarget).closest('.media-body').find('.form-control').focus();
   };
 
-  $scope.userInArray = function(userIds) {
-    return userIds.indexOf($scope.currentUser._id) !== -1;
-  };
-
   $scope.like = function() {
     $scope.media.$addLike(updateSuccess, failsRequest);
   };
@@ -28,20 +27,22 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
   };
 
   $scope.getLikers = function() {
-    if (typeof $scope.media.likers !== 'string') {
-      return $scope.media.likers;
+    if ($scope.likersLoaded === true) {
+      return $scope.likersText;
     }
 
     $scope.media.$getLikers(
       function(likers) {
-        $scope.media.likers = likers.join('<br>');
+        $scope.likersText = likers.join('<br>');
+        var diff = $scope.media.likesCount - likers.length;
+        if (diff > 0) {
+          $scope.likersText += ' and ' + ($scope.media.likesCount - likers.length) + 'others';
+          if (diff > 1) $scope.likersText += 's';
+        }
+        $scope.likersLoaded = true;
       },
       failsRequest
     );
-  };
-
-  $scope.ownMedia = function() {
-    return $scope.media.creator._id === $scope.currentUser._id;
   };
 
   $scope.comment = function() {
@@ -80,9 +81,9 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
     restrict: 'E',
     replace: true,
     scope: {
-      currentUser:            '=',
       media:                  '=',
       maxLastComments:        '=',
+      creatorUrlFormat:       '=',
       'deleteLabel':          '@',
       'defaultGravatarImage': '@',
       'editMedia':            '&onMediaEdit',
@@ -94,6 +95,11 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
 })
 
 .controller('CommentController', ['$scope', function($scope){
+  $scope.likersLoaded = false;
+  $scope.likersText = 'Chargement...';
+
+  $scope.creatorLink =  $scope.creatorUrlFormat.replace(':id', $scope.comment.creator._id);
+
   var updateSuccess = function(commentId) {
     return function() {
       $scope.media.$getComment(
@@ -108,26 +114,36 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
     };
   };
 
-  var updateError = function() {
+  var failsRequest = function() {
     console.log('error');
   };
 
-  $scope.userInArray = function(userIds) {
-    if (userIds) {
-      return userIds.indexOf($scope.currentUser._id) !== -1;
-    }
-  };
-
   $scope.likeComment = function() {
-    $scope.media.$addLikeToComment($scope.comment._id, updateSuccess($scope.comment._id), updateError);
+    $scope.media.$addLikeToComment($scope.comment._id, updateSuccess($scope.comment._id), failsRequest);
   };
 
   $scope.unlikeComment = function() {
-    $scope.media.$removeLikeFromComment($scope.comment._id, updateSuccess($scope.comment._id), updateError);
+    $scope.media.$removeLikeFromComment($scope.comment._id, updateSuccess($scope.comment._id), failsRequest);
   };
 
-  $scope.ownComment = function() {
-    return $scope.comment.creator._id === $scope.currentUser._id;
+  $scope.getLikers = function() {
+    if ($scope.likersLoaded === true) {
+      return $scope.likersText;
+    }
+
+    $scope.media.$getCommentLikers(
+      $scope.comment._id,
+      function(likers) {
+        $scope.likersText = likers.join('<br>');
+        var diff = $scope.comment.likesCount - likers.length;
+        if (diff > 0) {
+          $scope.likersText += ' and ' + ($scope.comment.likesCount - likers.length) + 'other';
+          if (diff > 1) $scope.likersText += 's';
+        }
+        $scope.likersLoaded = true;
+      },
+      failsRequest
+    );
   };
 }])
 
@@ -136,9 +152,9 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
     restrict: 'E',
     replace: true,
     scope: {
-      currentUser:            '=',
       media:                  '=',
       comment:                '=',
+      creatorUrlFormat:       '=',
       'defaultGravatarImage': '@',
       'removeComment':        '&onCommentRemove'
     },

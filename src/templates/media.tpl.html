@@ -3,22 +3,23 @@
         <gravatar email="media.creator.email" size="30" class="img-polaroid pull-right" default-image="defaultGravatarImage"></gravatar>
     </a>
     <div class="media-body">
+        <a class="creator" href="{{creatorLink}}">{{media.creator.name}}</a>
         <div ng-bind-html="media.text"></div>
         <div>
-            <button type="button" class="btn btn-danger btn-xs" ng-show="ownMedia()" ng-click="removeMedia(media)">{{deleteLabel}}</button>
+            <button type="button" class="btn btn-danger btn-xs" ng-show="media.editable" ng-click="removeMedia(media)">{{deleteLabel}}</button>
             &nbsp;&nbsp;
-            <span class="badge ng-binding media-num-likes" tooltip-html-unsafe="{{media.likers}}" tooltip-placement="bottom" ng-mouseover="getLikers()">{{media.likes.length}} <span class="glyphicon glyphicon-thumbs-up"></span></span>
-            <button type="button" class="btn btn-link" ng-show="!userInArray(media.likes)" ng-click="like()">Like</button>
-            <button type="button" class="btn btn-link" ng-show="userInArray(media.likes)" ng-click="unlike()">Unlike</button>
+            <span class="badge ng-binding media-num-likes" tooltip-html-unsafe="{{likersText}}" tooltip-placement="bottom" ng-mouseover="getLikers()">{{media.likesCount}} <span class="glyphicon glyphicon-thumbs-up"></span></span>
+            <button type="button" class="btn btn-link" ng-show="!media.liked" ng-click="like()">Like</button>
+            <button type="button" class="btn btn-link" ng-show="media.liked" ng-click="unlike()">Unlike</button>
             <button type="button" class="btn btn-link" ng-click="focusMediaCommentArea($event)">Comment</button>
-            <button type="button" class="btn btn-default btn-xs" ng-show="ownMedia()" ng-click="editMedia(media)">
+            <button type="button" class="btn btn-default btn-xs" ng-show="media.editable" ng-click="editMedia(media)">
                 <span class="glyphicon glyphicon-pencil"></span>
             </button>
         </div>
         <div>
             <button type="button" class="btn btn-link" ng-click="displayPreviousComments()">Voir les commentaires précédents</button>
         </div>
-        <comment class="comment" comment="comment" media="media" current-user="currentUser" ng-repeat="comment in media.comments" on-comment-remove="removeComment(comment)" default-gravatar-image="{{defaultGravatarImage}}"></comment>
+        <comment class="comment" comment="comment" media="media" creator-url-format="creatorUrlFormat" ng-repeat="comment in media.comments" on-comment-remove="removeComment(comment)" default-gravatar-image="{{defaultGravatarImage}}"></comment>
         <div class="media comment-editor">
             <a class="pull-left" href="#">
                 <gravatar email="currentUser.email" size="30" class="img-polaroid pull-right" default-image="defaultGravatarImage"></gravatar>
