@@ -25,11 +25,12 @@ $ bower install angular-bootstrap-media
 <link type="text/css" href="bootstrap.min.css"   rel="stylesheet">
 <link type="text/css" href="bootstrap-theme.css" rel="stylesheet"/>
 ...
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="bootstrap.min.js"></script>
 <script type="text/javascript" src="angular.min.js"></script>
 <script type="text/javascript" src="angular-sanitize.min.js"></script>
 <script type="text/javascript" src="angular-simple-gravatar.js"></script>
+<script type="text/javascript" src="angular-ui-bootstrap/src/bindHtml/bindHtml.js"></script>
+<script type="text/javascript" src="angular-ui-bootstrap/src/position/position.js"></script>
+<script type="text/javascript" src="angular-ui-bootstrap/src/tooltip/tooltip.js"></script>
 <script type="text/javascript" src="angular-bootstrap-media.js"></script>
 ```
 
@@ -44,7 +45,7 @@ angular.module('myModule', ['angular-bootstrap-media']);
 ```html
 <media
     media="media"
-    current-user="currentUser"
+    max-last-comments="10"
     on-media-edit="myControllerEditMethod(media)"
     on-media-remove="myControllerRemoveMethod(media)"
     delete-label="Supprimer le media"

@@ -17,6 +17,8 @@
     "angular": "v1.2.14",
     "angular-sanitize": "v1.2.14",
     "angular-simple-gravatar": "v0.0.3",
+    "angular-translate": "v2.0.0",
+    "angular-translate-interpolation-messageformat": "v2.0.0",
     "angular-ui-bootstrap": "v0.10.0"
   },
   "devDependencies": {

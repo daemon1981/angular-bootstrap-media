@@ -1,10 +1,24 @@
-angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 'angular.simple.gravatar', 'ngSanitize'])
+angular.module('angular.bootstrap.media', [
+  'angular.bootstrap.media.templates',
+  'angular.simple.gravatar',
+  'ngSanitize',
+  'pascalprecht.translate'
+])
 
-.controller('MediaController', ['$scope', function($scope){
+.config(['$translateProvider', function($translateProvider){
+  $translateProvider.translations('en', {
+    'CREATOR_URL': '/users/{{id}}',
+    'LIKERS_TEXT': '{{likersText}} {othersCount, plural, zero{} one{and one other person} other{and # others}}.'
+  });
+  $translateProvider.useMessageFormatInterpolation();
+  $translateProvider.preferredLanguage('en');
+}])
+
+.controller('MediaController', ['$scope', '$translate', function($scope, $translate){
   $scope.likersLoaded = false;
   $scope.likersText = 'Chargement...';
 
-  $scope.creatorLink = $scope.creatorUrlFormat.replace(':id', $scope.media.creator._id);
+  $scope.creatorLink = $translate.instant('CREATOR_URL', { id: $scope.media.creator._id });
 
   var updateSuccess = function(mediaUpdated) {
     $scope.media = mediaUpdated;
@@ -33,13 +47,13 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
 
     $scope.media.$getLikers(
       function(likers) {
-        $scope.likersText = likers.join('<br>');
-        var diff = $scope.media.likesCount - likers.length;
-        if (diff > 0) {
-          $scope.likersText += ' and ' + ($scope.media.likesCount - likers.length) + 'others';
-          if (diff > 1) $scope.likersText += 's';
-        }
-        $scope.likersLoaded = true;
+        $scope.likersText = $translate.instant(
+          'LIKERS_TEXT',
+          {
+            likersText: likers.join('<br>'),
+            othersCount: $scope.media.likesCount - likers.length
+          }
+        );
       },
       failsRequest
     );
@@ -83,7 +97,6 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
     scope: {
       media:                  '=',
       maxLastComments:        '=',
-      creatorUrlFormat:       '=',
       'deleteLabel':          '@',
       'defaultGravatarImage': '@',
       'editMedia':            '&onMediaEdit',
@@ -94,11 +107,11 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
   };
 })
 
-.controller('CommentController', ['$scope', function($scope){
+.controller('CommentController', ['$scope', '$translate', function($scope, $translate){
   $scope.likersLoaded = false;
   $scope.likersText = 'Chargement...';
 
-  $scope.creatorLink =  $scope.creatorUrlFormat.replace(':id', $scope.comment.creator._id);
+  $scope.creatorLink = $translate.instant('CREATOR_URL', { id: $scope.comment.creator._id });
 
   var updateSuccess = function(commentId) {
     return function() {
@@ -134,12 +147,13 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
     $scope.media.$getCommentLikers(
       $scope.comment._id,
       function(likers) {
-        $scope.likersText = likers.join('<br>');
-        var diff = $scope.comment.likesCount - likers.length;
-        if (diff > 0) {
-          $scope.likersText += ' and ' + ($scope.comment.likesCount - likers.length) + 'other';
-          if (diff > 1) $scope.likersText += 's';
-        }
+        $scope.likersText = $translate.instant(
+          'LIKERS_TEXT',
+          {
+            likersText: likers.join('<br>'),
+            othersCount: $scope.comment.likesCount - likers.length
+          }
+        );
         $scope.likersLoaded = true;
       },
       failsRequest
@@ -154,7 +168,6 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
     scope: {
       media:                  '=',
       comment:                '=',
-      creatorUrlFormat:       '=',
       'defaultGravatarImage': '@',
       'removeComment':        '&onCommentRemove'
     },

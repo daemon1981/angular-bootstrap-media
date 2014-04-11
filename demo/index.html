@@ -148,12 +148,20 @@
       return Media;
     }]);
 
+    // angular.module('angular.bootstrap.media').constant('I18N.MESSAGES', {
+    //   'creator.url.format':'/changed/route/users/{{id}}'
+    // });
+
     angular.module('mediaDemo', [
       'mediaResource',
       'vendor-templates',
       'angular.bootstrap.media',
       'ui.bootstrap.tooltip'
     ])
+
+    .constant('ANGULAR.BOOTSTRAP.MEDIA.I18N', {
+      'creator.url.format':'/changed/route/users/{{id}}'
+    })
     
     .controller('MediaDemoController', ['$scope', 'Media', function ($scope, Media) {
       $scope.media = new Media(demoMediaData);
@@ -174,7 +182,6 @@
   <div ng-controller="MediaDemoController">
     <media
         media="media"
-        creator-url-format="'/users/:id'"
         max-last-comments="1"
         on-media-edit="editMedia(media)"
         on-media-remove="removeMedia(media)"

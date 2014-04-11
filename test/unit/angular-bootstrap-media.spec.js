@@ -55,7 +55,6 @@ describe('angular.bootstrap.media', function () {
       $scope.currentUser = { _id: 'user-id' };
       var template = '<media ' +
         'media="media" ' +
-        'creator-url-format="\'/users/:id\'" ' +
         'max-last-comments="10" ' +
         'delete-label="Supprimer le media" ' +
         'default-gravatar-image="monsterid">' +
@@ -221,7 +220,6 @@ describe('angular.bootstrap.media', function () {
       var template = '<comment ' +
         'media="media" ' +
         'comment="comment" ' +
-        'creator-url-format="\'/users/:id\'" ' +
         'on-comment-remove="removeComment(comment)" ' +
         'default-gravatar-image="monsterid">' +
         '</comment>';
