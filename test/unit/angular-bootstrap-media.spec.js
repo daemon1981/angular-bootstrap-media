@@ -1,70 +1,124 @@
 describe('angular.bootstrap.media', function () {
   var $scope, element;
 
-  function createMockComment(id, message, likes, creatorId) {
+  function createMockComment(id, message, likesCount, liked) {
+    if (!likesCount) {
+      likesCount = 0;
+    }
+
+    if (!liked) {
+      liked = false;
+    }
+
     return {
-      _id: id,
-      message: message,
-      likes: likes,
-      creator: {
-        _id: creatorId
+      _id:        id,
+      message:    message,
+      likesCount: likesCount,
+      liked:      liked,
+      creator:    {
+        _id: 'user-id',
+        name: 'Dummy Name',
+        email: 'dummy@email.com'
       }
     };
   }
 
-  function createMockMedia(id, text, likes, comments, creatorId) {
+  function createMockMedia(id, text, likesCount, liked, comments) {
+    if (!likesCount) {
+      likesCount = 0;
+    }
+
+    if (!liked) {
+      liked = false;
+    }
+
     var media = {
-      _id: id,
-      text: text,
-      likes: likes,
-      comments: comments,
-      creator: {
-        _id: creatorId
+      _id:        id,
+      text:       text,
+      likesCount: likesCount,
+      liked:      liked,
+      comments:   comments,
+      creator:    {
+        _id: 'user-id',
+        name: 'Dummy Name',
+        email: 'dummy@email.com'
       }
     };
 
     media.$id = function() { return media._id; };
+    media.$getText = function() { return media.text; };
 
     return media;
   }
 
+  var service = {
+    formatLikersText: function(likesCount, nameList) {
+      return nameList.split(',');
+    },
+    /**
+     * Get creator profile link
+     * @param {Media|Comment} object
+     */
+    getCreatorProfileLink: function(object) {
+      return '/profile/' + object.creator._id;
+    },
+    /**
+     * Get creator picture link
+     * @param {Media|Comment} object
+     */
+    getCreatorPictureLink: function(object) {
+      return '/users/' + object.creator._id + '/picture';
+    },
+    getUserPictureLink: function(){
+      return '/users/current-user-id/picture';
+    },
+    editMedia: function(media) {
+      // edit media
+    },
+    removeMedia: function(media) {
+      // remove media
+    },
+    getDeleteLabel: function(){
+      return 'Dummy delete label';
+    }
+  };
+
+  beforeEach(module('vendor-templates'));
   beforeEach(module('angular.bootstrap.media.templates'));
   beforeEach(module('angular.bootstrap.media'));
 
   describe('media', function () {
     beforeEach(inject(function($rootScope, $compile) {
       $scope = $rootScope;
-      $scope.currentUser = { _id: 'user-id' };
+      $scope.service = service;
       var template = '<media ' +
         'media="media" ' +
-        'maxLastComments="10" ' +
-        'current-user="currentUser" ' +
-        'delete-label="Supprimer le media" ' +
-        'default-gravatar-image="monsterid">' +
+        'service="service" ' +
+        'max-last-comments="10">' +
         '</media>';
       element = $compile(template)($scope);
     }));
 
     it('create a media component', function() {
-      $scope.media = createMockMedia('media-id', 'dummy text', [], [], 'test@eleven-labs.com');
+      $scope.media = createMockMedia('media-id', 'dummy text', 0, false, []);
       $scope.$digest();
       // check buttons presence
       expect(element.find('button').length).toBe(6);
-      expect(element.find('button[ng-click="removeMedia(media)"]').length).toBe(1);
+      expect(element.find('button[ng-click="service.removeMedia(media)"]').length).toBe(1);
       expect(element.find('button[ng-click="like()"]').length).toBe(1);
       expect(element.find('button[ng-click="unlike()"]').length).toBe(1);
       expect(element.find('button[ng-click="focusMediaCommentArea($event)"]').length).toBe(1);
-      expect(element.find('button[ng-click="editMedia(media)"]').length).toBe(1);
+      expect(element.find('button[ng-click="service.editMedia(media)"]').length).toBe(1);
       expect(element.find('button[ng-click="displayPreviousComments()"]').length).toBe(1);
-      // comment elements presences
+      // comment elements presence
       expect(element.find('.media.comment-editor').length).toBe(1);
       expect(element.find('.media.comment-editor .media-body').length).toBe(1);
       expect(element.find('.media.comment-editor form[ng-submit="comment()"]').length).toBe(1);
       expect(element.find('.media.comment-editor input[type="submit"]').length).toBe(1);
-      // check gravatars presence
+      // check image precence
       expect(element.find('img').length).toBe(2);
-      expect(element.find('img:eq(0)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
-      expect(element.find('img:eq(1)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
+      expect(element.find('img:eq(0)').attr('src')).toBe('/users/user-id/picture');
+      expect(element.find('img:eq(1)').attr('src')).toBe('/users/current-user-id/picture');
       // no comments
       expect(element.find('.media.comment').length).toBe(0);
       // no one like
@@ -72,13 +126,13 @@ describe('angular.bootstrap.media', function () {
     });
 
     it('create a media component with one comment', function() {
-      $scope.media = createMockMedia('media-id', 'dummy text', [], [createMockComment('comment-id', 'dummy message')]);
+      $scope.media = createMockMedia('media-id', 'dummy text', 0, false, [createMockComment('comment-id', 'dummy message')]);
       $scope.$digest();
       // check gravatars presence
       expect(element.find('img').length).toBe(3);
-      expect(element.find('img:eq(0)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
-      expect(element.find('img:eq(1)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
-      expect(element.find('img:eq(2)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
+      expect(element.find('img:eq(0)').attr('src')).toBe('/users/user-id/picture');
+      expect(element.find('img:eq(1)').attr('src')).toBe('/users/user-id/picture');
+      expect(element.find('img:eq(2)').attr('src')).toBe('/users/current-user-id/picture');
       // no comments
       expect(element.find('.media.comment').length).toBe(1);
       // no one like
@@ -89,8 +143,9 @@ describe('angular.bootstrap.media', function () {
       $scope.media = createMockMedia(
         'media-id',
         'dummy text',
-        ['user-dummy-id-1', 'user-dummy-id-2'],
-        [createMockComment('comment-id', 'dummy message', [])]
+        2,
+        false,
+        [createMockComment('comment-id', 'dummy message')]
       );
       $scope.$digest();
       expect(element.find('.media.comment').length).toBe(1);
@@ -100,9 +155,9 @@ describe('angular.bootstrap.media', function () {
 
     describe('like', function () {
       it('increment one like', function() {
-        $scope.media = createMockMedia('media-id', 'dummy text', [], []);
+        $scope.media = createMockMedia('media-id', 'dummy text', 0, false, []);
         $scope.media.$addLike = function(success) {
-          success(createMockMedia('media-id', 'dummy text', ['user-id'], []));
+          success(createMockMedia('media-id', 'dummy text', 1, true, []));
         };
         $scope.$digest();
 
@@ -120,9 +175,9 @@ describe('angular.bootstrap.media', function () {
 
     describe('unlike', function () {
       it('unincrement one like', function() {
-        $scope.media = createMockMedia('media-id', 'dummy text', ['user-id'], []);
+        $scope.media = createMockMedia('media-id', 'dummy text', 1, true, []);
         $scope.media.$removeLike = function(success) {
-          success(createMockMedia('media-id', 'dummy text', [], []));
+          success(createMockMedia('media-id', 'dummy text', 0, false, []));
         };
         $scope.$digest();
 
@@ -140,9 +195,9 @@ describe('angular.bootstrap.media', function () {
 
     describe('comment', function () {
       it('insert a comment', function() {
-        $scope.media = createMockMedia('media-id', 'dummy text', [], []);
+        $scope.media = createMockMedia('media-id', 'dummy text', 0, false, []);
         $scope.media.$addComment = function(message, success) {
-          success(createMockMedia('media-id', 'dummy text', [], [createMockComment('comment-id', message, [])]));
+          success(createMockMedia('media-id', 'dummy text', 0, false, [createMockComment('comment-id', message)]));
         };
         $scope.$digest();
 
@@ -158,10 +213,10 @@ describe('angular.bootstrap.media', function () {
 
     describe('removeComment', function () {
       it('remove a comment', function() {
-        var comment = createMockComment('comment-id', 'dummy message', []);
-        $scope.media = createMockMedia('media-id', 'dummy text', [], [comment]);
+        var comment = createMockComment('comment-id', 'dummy message');
+        $scope.media = createMockMedia('media-id', 'dummy text', 0, false, [comment]);
         $scope.media.$removeComment = function(commentId, success) {
-          success(createMockMedia('media-id', 'dummy text', [], []));
+          success(createMockMedia('media-id', 'dummy text', 0, false, []));
         };
         $scope.$digest();
 
@@ -176,10 +231,10 @@ describe('angular.bootstrap.media', function () {
 
     describe('displayPreviousComments', function () {
       it('display previous comments before displayed comments', function() {
-        var comment = createMockComment('comment-id-2', 'dummy message 2', []);
-        $scope.media = createMockMedia('media-id', 'dummy text', [], [comment]);
+        var comment = createMockComment('comment-id-2', 'dummy message 2');
+        $scope.media = createMockMedia('media-id', 'dummy text', 0, false, [comment]);
         $scope.media.$getPreviousComments = function(numComments, maxNumLast, success) {
-          success({0: createMockComment('comment-id-1', 'dummy message 1', [])});
+          success({0: createMockComment('comment-id-1', 'dummy message 1')});
         };
         $scope.$digest();
 
@@ -193,35 +248,25 @@ describe('angular.bootstrap.media', function () {
         expect(element.find('.media.comment:eq(1) .media-body').text()).toMatch(/dummy message 2/);
       });
     });
-
-    describe('ownMedia', function () {
-      it('display edit and remove button when user owns the media', function() {
-        $scope.media = createMockMedia('media-id', 'dummy text', [], [], 'user-id');
-        $scope.$digest();
-
-        expect(element.find('button[ng-click="removeMedia(media)"]').hasClass('ng-hide')).toBe(false);
-        expect(element.find('button[ng-click="editMedia(media)"]').hasClass('ng-hide')).toBe(false);
-      });
-      it('hide edit and remove button when user doesn\'t own the media', function() {
-        $scope.media = createMockMedia('media-id', 'dummy text', [], [], 'other-user-id');
-        $scope.$digest();
-
-        expect(element.find('button[ng-click="removeMedia(media)"]').hasClass('ng-hide')).toBe(true);
-        expect(element.find('button[ng-click="editMedia(media)"]').hasClass('ng-hide')).toBe(true);
-      });
-    });
   });
 
   describe('comment', function () {
     beforeEach(inject(function($rootScope, $compile) {
       $scope = $rootScope;
-      $scope.currentUser = { _id: 'user-id' };
-      element = $compile('<comment comment="comment" current-user="currentUser" media="media" on-comment-remove="removeComment(comment)" default-gravatar-image="monsterid"></comment>')($scope);
+      $scope.service = service;
+      var template = '<comment ' +
+        'media="media" ' +
+        'service="service" ' +
+        'comment="comment" ' +
+        'on-comment-remove="removeComment(comment)" ' +
+        'default-gravatar-image="monsterid">' +
+        '</comment>';
+      element = $compile(template)($scope);
     }));
 
     it('create a comment', function(){
-      var comment = createMockComment('comment-id', 'dummy message', []);
-      $scope.media = createMockMedia('media-id', 'dummy text', [], [comment]);
+      var comment = createMockComment('comment-id', 'dummy message');
+      $scope.media = createMockMedia('media-id', 'dummy text', 0, false, [comment]);
       $scope.comment = comment;
       $scope.$digest();
 
@@ -232,15 +277,15 @@ describe('angular.bootstrap.media', function () {
       expect(element.find('button[ng-click="removeComment(comment)"]').length).toBe(1);
       // check gravatars presence
       expect(element.find('img').length).toBe(1);
-      expect(element.find('img:eq(0)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
+      expect(element.find('img:eq(0)').attr('src')).toBe('/users/user-id/picture');
       // no one like
       expect(element.find('.comment-num-likes').length).toBe(1);
       expect(element.find('.comment-num-likes:eq(0)').text().trim()).toBe('0');
     });
 
     it('display count likes when existing', function() {
-      var comment = createMockComment('comment-id', 'dummy message', ['user-dummy-id-1', 'user-dummy-id-2']);
-      $scope.media = createMockMedia('media-id', 'dummy text', [], [comment]);
+      var comment = createMockComment('comment-id', 'dummy message', 2, false);
+      $scope.media = createMockMedia('media-id', 'dummy text', 0, false, [comment]);
       $scope.comment = comment;
       $scope.$digest();
 
@@ -250,14 +295,14 @@ describe('angular.bootstrap.media', function () {
 
     describe('likeComment', function(){
       it('add like to the comment', function() {
-        var comment = createMockComment('comment-id', 'dummy message', []);
-        $scope.media = createMockMedia('media-id', 'dummy text', [], [comment]);
+        var comment = createMockComment('comment-id', 'dummy message');
+        $scope.media = createMockMedia('media-id', 'dummy text', 0, false, [comment]);
         $scope.comment = comment;
         $scope.media.$addLikeToComment = function(commentId, success) {
           success();
         };
         $scope.media.$getComment = function(commentId, success) {
-          success(createMockComment('comment-id', 'dummy message', ['user-id']));
+          success(createMockComment('comment-id', 'dummy message', 1, true));
         };
         $scope.$digest();
 
@@ -278,14 +323,14 @@ describe('angular.bootstrap.media', function () {
 
     describe('unlikeComment', function(){
       it('unlike a comment', function() {
-        var comment = createMockComment('comment-id', 'dummy message', ['user-id']);
-        $scope.media = createMockMedia('media-id', 'dummy text', [], [comment]);
+        var comment = createMockComment('comment-id', 'dummy message', 1, true);
+        $scope.media = createMockMedia('media-id', 'dummy text', 0, false, [comment]);
         $scope.comment = comment;
         $scope.media.$removeLikeFromComment = function(commentId, success) {
           success();
         };
         $scope.media.$getComment = function(commentId, success) {
-          success(createMockComment('comment-id', 'dummy message', []));
+          success(createMockComment('comment-id', 'dummy message'));
         };
         $scope.$digest();
 
@@ -300,25 +345,6 @@ describe('angular.bootstrap.media', function () {
         expect(element.find('.comment-num-likes').text().trim()).toBe('0');
         expect(element.find('button[ng-click="likeComment()"]').hasClass('ng-hide')).toBe(false);
         expect(element.find('button[ng-click="unlikeComment()"]').hasClass('ng-hide')).toBe(true);
-      });
-    });
-
-    describe('ownComment', function () {
-      it('display remove button when user owns the comment', function() {
-        var comment = createMockComment('comment-id', 'dummy message', [], 'user-id');
-        $scope.media = createMockMedia('media-id', 'dummy text', [], [comment]);
-        $scope.comment = comment;
-        $scope.$digest();
-
-        expect(element.find('button[ng-click="removeComment(comment)"]').hasClass('ng-hide')).toBe(false);
-      });
-      it('hide remove button when user doesn\'t own the comment', function() {
-        var comment = createMockComment('comment-id', 'dummy message', [], 'other-user-id');
-        $scope.media = createMockMedia('media-id', 'dummy text', [], [comment]);
-        $scope.comment = comment;
-        $scope.$digest();
-
-        expect(element.find('button[ng-click="removeComment(comment)"]').hasClass('ng-hide')).toBe(true);
       });
     });
   });

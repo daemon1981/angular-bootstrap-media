@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="mediaDemo">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Angular Bootstrap Media Demo">
+  <meta name="author" content="Damien Saillard">
+  <link rel="stylesheet" type="text/css" href="./vendor/bootstrap/dist/css/bootstrap.css"/>
+  <link rel="stylesheet" type="text/css" href="./vendor/bootstrap/dist/css/bootstrap-theme.css"/>
+  <title>Angular Bootstrap Media Demo</title>
+  <script type="text/javascript" src="./vendor/lib.js"></script>
+  <script type="text/javascript" src="./vendor/angular-bootstrap-media.js"></script>
+  <!-- Just for debugging purposes. Don't actually copy this line! -->
+  <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+  <![endif]-->
+
+  <script type="text/javascript">
+    var demoMediaData = {
+      _id: 1,
+      editable: true,
+      liked: true,
+      likesCount: 2,
+      text:  'dummy test',
+      dateCreation: new Date(),
+      comments: [
+        {
+          _id: 0,
+          editable: false,
+          liked: false,
+          likesCount: 3,
+          message: 'dummy message',
+          dateCreation: new Date(),
+          creator: {
+            _id:  2,
+            name: 'Dummy Name',
+            email: 'dummy@email.com'
+          }
+        },
+        {
+          _id: 1,
+          editable: true,
+          liked: false,
+          likesCount: 1,
+          message: 'dummy message',
+          dateCreation: new Date(),
+          creator: {
+            _id:  1,
+            name: 'Dummy Name',
+            email: 'dummy@email.com'
+          }
+        }
+      ],
+      creator: {
+        _id:  1,
+        name: 'Dummy Name',
+        email: 'dummy@email.com'
+      }
+    };
+
+    angular.module('mediaResource', ['ngSanitize', 'angular.simple.gravatar']).factory('MediaResource', ['$sanitize', function ($sanitize) {
+      var Media = function (data) {
+        angular.extend(this, data);
+      };
+
+      Media.prototype.$addLike = function (success) {
+        this.liked = true;
+        this.likesCount++;
+        success(this);
+      };
+
+      Media.prototype.$removeLike = function (success) {
+        this.liked = false;
+        this.likesCount--;
+        success(this);
+      };
+
+      Media.prototype.$getLikers = function (success) {
+        setTimeout(
+          function(){
+            success(['Dummy Name', 'Dummy Name']);
+          },
+          1000
+        );
+      };
+
+      Media.prototype.$addComment = function (message, success) {
+        this.comments.push({
+          liked: false,
+          message: message,
+          creator: { _id: 'dummy user id' }
+        });
+        success(this);
+      };
+
+      Media.prototype.$removeComment = function (commentId, success) {
+        this.comments.pop();
+        success(this);
+      };
+
+      Media.prototype.$getPreviousComments = function (numComments, maxNumLast, success) {
+        success([{
+          _id: 3,
+          editable: false,
+          liked: false,
+          likesCount: 5,
+          dateCreation: new Date(),
+          message: 'dummy message',
+          creator: {
+            _id:  1,
+            name: 'Dummy Name',
+            email: 'dummy@email.com'
+          }
+        }]);
+      };
+
+      var comment;
+
+      Media.prototype.$getComment = function (commentId, success) {
+        success(comment);
+      };
+
+      Media.prototype.$addLikeToComment = function (commentId, success) {
+        var userId = Date.now();
+        this.comments[this.comments.length - 1].liked = true;
+        this.comments[this.comments.length - 1].likesCount++;
+        comment = this.comments[this.comments.length - 1];
+        success(this.comments[this.comments.length - 1]);
+      };
+
+      Media.prototype.$removeLikeFromComment = function (commentId, success) {
+        this.comments[this.comments.length - 1].liked = false;
+        this.comments[this.comments.length - 1].likesCount--;
+        comment = this.comments[this.comments.length - 1];
+        success();
+      };
+
+      Media.prototype.$getCommentLikers = function (commentId, success) {
+        setTimeout(
+          function(){
+            success(['Dummy Name', 'Dummy Name']);
+          },
+          1000
+        );
+      };
+
+      Media.prototype.$getText = function(){
+        return $sanitize(this.text);
+      }
+
+      return Media;
+    }]).factory('MediaService', ['gravatar', function (gravatar) {
+      return {
+        /**
+         * Format likers text
+         * @param {Array} likersNames list of likers' name
+         */
+        formatLikersText: function(likesCount, nameList) {
+          return nameList.join('<br>');
+        },
+        /**
+         * Get creator profile link
+         * @param {Media|Comment} object
+         */
+        getCreatorProfileLink: function(object) {
+          return '/users/' + object.creator._id;
+        },
+        /**
+         * Get creator picture link
+         * @param {Media|Comment} object
+         */
+        getCreatorPictureLink: function(object) {
+          return gravatar(object.creator.email);
+        },
+        editMedia: function(media) {
+          alert('Edit event media ' + media._id);
+        },
+        removeMedia: function(media) {
+          alert('Remove event media ' + media._id);
+        },
+        getDeleteLabel: function(){
+          return 'Supprimer le media';
+        },
+        getUserPictureLink: function(){
+          return gravatar('current-user@email.com');
+        }
+      }
+    }]);
+
+    // angular.module('angular.bootstrap.media').constant('I18N.MESSAGES', {
+    //   'creator.url.format':'/changed/route/users/{{id}}'
+    // });
+
+    angular.module('mediaDemo', [
+      'mediaResource',
+      'vendor-templates',
+      'angular.bootstrap.media'
+    ])
+    
+    .controller('MediaDemoController', ['$scope', 'MediaResource', 'MediaService', function ($scope, MediaResource, MediaService) {
+      $scope.media = new MediaResource(demoMediaData);
+      $scope.service = MediaService;
+      $scope.currentUser = { _id: 'current dummy user id' };
+    }]);
+  </script>
+</head>
+
+<body>
+  <div ng-controller="MediaDemoController">
+    <media
+        media="media"
+        service="service"
+        max-last-comments="1">
+    </media>
+  </div>
+</body>
+</html>

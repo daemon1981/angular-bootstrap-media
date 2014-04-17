@@ -11,8 +11,8 @@ module.exports = function (grunt) {
 
   // Default task.
   grunt.registerTask('default', ['build','jshint','karma:unit']);
-  grunt.registerTask('build', ['clean:build','html2js','concat','clean:build_templates']);
-  grunt.registerTask('release', ['clean:build','html2js','concat','uglify','clean:build_templates','jshint','karma:unit']);
+  grunt.registerTask('build', ['clean','html2js','concat','clean:build_templates', 'copy:demo', 'copy:test']);
+  grunt.registerTask('release', ['clean','html2js','concat','uglify','clean:build_templates', 'copy:demo','jshint','karma:unit']);
   grunt.registerTask('test-watch', ['karma:watch']);
 
   // Print a timestamp (useful for when watching)
@@ -28,7 +28,9 @@ module.exports = function (grunt) {
 
   // Project configuration.
   grunt.initConfig({
-    distdir: 'dist',
+    distDir: 'dist',
+    demoVendorDir: 'demo/vendor',
+    testVendorDir: 'test/vendor',
     pkg: grunt.file.readJSON('package.json'),
     banner:
     '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>\n' +
@@ -37,13 +39,19 @@ module.exports = function (grunt) {
     ' * Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %>\n */\n',
     src: {
       js:    ['src/**/*.js'],
-      jsTpl: ['<%= distdir %>/templates.js'],
+      jsTpl: ['<%= distDir %>/templates.js'],
+      vendorTpl: ['<%= demoVendorDir %>/vendor-templates.js'],
       specs: ['test/**/*.spec.js'],
-      tpl:   ['src/**/*.tpl.html']
+      tpl: {
+        app: ['src/**/*.tpl.html'],
+        vendor: ['bower_components/angular-ui-bootstrap/template/**/*.html']
+      },
     },
     clean: {
-      build: ['<%= distdir %>/*'],
-      build_templates: ['<%= distdir %>/templates.js']
+      build: ['<%= distDir %>/*'],
+      demo: ['<%= demoVendorDir %>/*'],
+      test: ['<%= testVendorDir %>/*'],
+      build_templates: ['<%= distDir %>/templates.js']
     },
     karma: {
       unit: { options: karmaConfig('karma.conf.js') },
@@ -54,9 +62,17 @@ module.exports = function (grunt) {
         options: {
           base: 'src/templates'
         },
-        src: ['<%= src.tpl %>'],
-        dest: '<%= distdir %>/templates.js',
+        src: ['<%= src.tpl.app %>'],
+        dest: '<%= distDir %>/templates.js',
         module: 'angular.bootstrap.media.templates'
+      },
+      vendor: {
+        options: {
+          base: 'bower_components/angular-ui-bootstrap'
+        },
+        src: ['<%= src.tpl.vendor %>'],
+        dest: '<%= demoVendorDir %>/vendor-templates.js',
+        module: 'vendor-templates'
       }
     },
     concat: {
@@ -65,7 +81,19 @@ module.exports = function (grunt) {
           banner: "<%= banner %>"
         },
         src:['<%= src.js %>', '<%= src.jsTpl %>'],
-        dest:'<%= distdir %>/<%= pkg.name %>.js'
+        dest:'<%= distDir %>/<%= pkg.name %>.js'
+      },
+      demoVendorJs: {
+        src:[
+          'bower_components/angular/angular.js',
+          'bower_components/angular-sanitize/angular-sanitize.js',
+          'bower_components/angular-simple-gravatar/dist/angular-simple-gravatar.js',
+          '<%= src.vendorTpl %>',
+          'bower_components/angular-ui-bootstrap/src/bindHtml/bindHtml.js',
+          'bower_components/angular-ui-bootstrap/src/position/position.js',
+          'bower_components/angular-ui-bootstrap/src/tooltip/tooltip.js'
+        ],
+        dest: '<%= demoVendorDir %>/lib.js'
       }
     },
     uglify: {
@@ -74,16 +102,29 @@ module.exports = function (grunt) {
           banner: "<%= banner %>"
         },
         src:['<%= src.js %>' ,'<%= src.jsTpl %>'],
-        dest:'<%= distdir %>/<%= pkg.name %>.min.js'
+        dest:'<%= distDir %>/<%= pkg.name %>.min.js'
+      }
+    },
+    copy: {
+      demo: {
+        files: [
+          { dest: '<%= demoVendorDir %>', src : '**', expand: true, cwd: '<%= distDir %>' },
+          { dest: '<%= demoVendorDir %>', src : 'bootstrap/**', expand: true, cwd: 'bower_components' },
+        ]
+      },
+      test: {
+        files: [
+          { dest: '<%= testVendorDir %>', src : 'vendor-templates.js', expand: true, cwd: '<%= demoVendorDir %>' }
+        ]
       }
     },
     watch:{
       all: {
-        files:['<%= src.js %>', '<%= src.specs %>', '<%= src.lessWatch %>', '<%= src.tpl.app %>', '<%= src.html %>'],
+        files:['<%= src.js %>', '<%= src.specs %>', '<%= src.tpl.app %>'],
         tasks:['default','timestamp']
       },
       build: {
-        files:['<%= src.js %>', '<%= src.specs %>', '<%= src.lessWatch %>', '<%= src.tpl.app %>', '<%= src.html %>'],
+        files:['<%= src.js %>', '<%= src.specs %>', '<%= src.tpl.app %>'],
         tasks:['build','timestamp']
       }
     },

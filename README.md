@@ -22,13 +22,12 @@ $ bower install angular-bootstrap-media
 ### Include in your header
 
 ```html
-<link href="bootstrap.min.css" rel="stylesheet">
+<link type="text/css" href="bootstrap.min.css"   rel="stylesheet">
+<link type="text/css" href="bootstrap-theme.css" rel="stylesheet"/>
 ...
-<script src="angular.min.js"></script>
-<script src="angular-sanitize.min.js"></script>
-<script src="bootstrap.min.js"></script>
-<script src="angular-simple-gravatar.js"></script>
-<script src="angular-bootstrap-media.js"></script>
+<script type="text/javascript" src="angular.min.js"></script>
+<script type="text/javascript" src="ui-bootstrap-tpls-0.10.0.min.js"></script>
+<script type="text/javascript" src="angular-bootstrap-media.js"></script>
 ```
 
 ### Include module in your angular module
@@ -42,35 +41,12 @@ angular.module('myModule', ['angular-bootstrap-media']);
 ```html
 <media
     media="media"
-    current-user="currentUser"
-    on-media-edit="myControllerEditMethod(media)"
-    on-media-remove="myControllerRemoveMethod(media)"
-    delete-label="Supprimer le media"
-    default-gravatar-image="monsterid">
+    service="service"
+    max-last-comments="10">
 </media>
 ```
 
-### minimalist structure of the media and the currentUser
-
-```javascript
-var media = {
-  text:  'dummy test',
-  likes: [],
-  comments: [
-    {
-      _id:     'dummy comment id'
-      message: 'dummy message',
-      likes:   [],
-      creator: { _id: 'dummy user id' }
-    }
-  ],
-  creator: { _id: 'dummy user id' }
-};
-```
-
-```javascript
-var currentUser = { _id: 'dummy user id' };
-```
+See [demo](https://github.com/daemon1981/angular-bootstrap-media/tree/master/demo/index.html) to see how to implements "angular-bootstrap-media".
 
 ## Contributing to the project
 

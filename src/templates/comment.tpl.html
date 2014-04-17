@@ -1,14 +1,15 @@
 <div class="media comment">
     <a class="pull-left" href="#">
-        <gravatar email="comment.creator.email" size="30" class="img-polaroid pull-right" default-image="defaultGravatarImage"></gravatar>
+        <img ng-src="{{creatorPictureLink}}" width="30" class="img-polaroid pull-right">
     </a>
     <div class="media-body">
-        {{comment.message}}
+        <a class="creator" href="{{creatorLink}}">{{comment.creator.name}}</a> {{comment.message}}
         <div>
-            <span class="badge ng-binding comment-num-likes">{{comment.likes.length}} <span class="glyphicon glyphicon-thumbs-up"></span></span>
-            <button type="button" class="btn btn-link" ng-show="!userInArray(comment.likes)" ng-click="likeComment()">Like</button>
-            <button type="button" class="btn btn-link" ng-show="userInArray(comment.likes)" ng-click="unlikeComment()">Unlike</button>
-            <button type="button" class="btn btn-danger btn-xs" ng-show="ownComment()" ng-click="removeComment(comment)">
+            <span>{{ comment.dateCreation | date:'medium' }}</span>
+            <span class="badge ng-binding comment-num-likes" tooltip-html-unsafe="{{likersText}}" tooltip-placement="bottom" ng-mouseover="getLikers()">{{comment.likesCount}} <span class="glyphicon glyphicon-thumbs-up"></span></span>
+            <button type="button" class="btn btn-link" ng-show="!comment.liked" ng-click="likeComment()">Like</button>
+            <button type="button" class="btn btn-link" ng-show="comment.liked" ng-click="unlikeComment()">Unlike</button>
+            <button type="button" class="btn btn-danger btn-xs" ng-show="comment.editable" ng-click="removeComment(comment)">
                 <span class="glyphicon glyphicon-remove"></span>
             </button>
         </div>
