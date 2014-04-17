@@ -1,7 +1,7 @@
 describe('angular.bootstrap.media', function () {
   var $scope, element;
 
-  function createMockComment(id, message, likesCount, liked, creatorId) {
+  function createMockComment(id, message, likesCount, liked) {
     if (!likesCount) {
       likesCount = 0;
     }
@@ -11,17 +11,19 @@ describe('angular.bootstrap.media', function () {
     }
 
     return {
-      _id: id,
-      message: message,
+      _id:        id,
+      message:    message,
       likesCount: likesCount,
-      liked: liked,
-      creator: {
-        _id: creatorId
+      liked:      liked,
+      creator:    {
+        _id: 'user-id',
+        name: 'Dummy Name',
+        email: 'dummy@email.com'
       }
     };
   }
 
-  function createMockMedia(id, text, likesCount, liked, comments, creatorId) {
+  function createMockMedia(id, text, likesCount, liked, comments) {
     if (!likesCount) {
       likesCount = 0;
     }
@@ -31,59 +33,92 @@ describe('angular.bootstrap.media', function () {
     }
 
     var media = {
-      _id: id,
-      text: text,
+      _id:        id,
+      text:       text,
       likesCount: likesCount,
-      liked: liked,
-      comments: comments,
-      creator: {
-        _id: creatorId
+      liked:      liked,
+      comments:   comments,
+      creator:    {
+        _id: 'user-id',
+        name: 'Dummy Name',
+        email: 'dummy@email.com'
       }
     };
 
     media.$id = function() { return media._id; };
-    media.$getCreatorLink = function(creatorId) { return '/users/' + creatorId; };
-    media.$formatLikersText = function(likers) { return likers.join(','); };
+    media.$getText = function() { return media.text; };
 
     return media;
   }
 
+  var service = {
+    formatLikersText: function(likesCount, nameList) {
+      return nameList.split(',');
+    },
+    /**
+     * Get creator profile link
+     * @param {Media|Comment} object
+     */
+    getCreatorProfileLink: function(object) {
+      return '/profile/' + object.creator._id;
+    },
+    /**
+     * Get creator picture link
+     * @param {Media|Comment} object
+     */
+    getCreatorPictureLink: function(object) {
+      return '/users/' + object.creator._id + '/picture';
+    },
+    getUserPictureLink: function(){
+      return '/users/current-user-id/picture';
+    },
+    editMedia: function(media) {
+      // edit media
+    },
+    removeMedia: function(media) {
+      // remove media
+    },
+    getDeleteLabel: function(){
+      return 'Dummy delete label';
+    }
+  };
+
+  beforeEach(module('vendor-templates'));
   beforeEach(module('angular.bootstrap.media.templates'));
   beforeEach(module('angular.bootstrap.media'));
 
   describe('media', function () {
     beforeEach(inject(function($rootScope, $compile) {
       $scope = $rootScope;
-      $scope.currentUser = { _id: 'user-id' };
+      $scope.service = service;
       var template = '<media ' +
         'media="media" ' +
-        'max-last-comments="10" ' +
-        'delete-label="Supprimer le media" ' +
-        'default-gravatar-image="monsterid">' +
+        'service="service" ' +
+        'max-last-comments="10">' +
         '</media>';
       element = $compile(template)($scope);
     }));
 
     it('create a media component', function() {
-      $scope.media = createMockMedia('media-id', 'dummy text', 0, false, [], 'test@eleven-labs.com');
+      $scope.media = createMockMedia('media-id', 'dummy text', 0, false, []);
       $scope.$digest();
       // check buttons presence
       expect(element.find('button').length).toBe(6);
-      expect(element.find('button[ng-click="removeMedia(media)"]').length).toBe(1);
+      expect(element.find('button[ng-click="service.removeMedia(media)"]').length).toBe(1);
       expect(element.find('button[ng-click="like()"]').length).toBe(1);
       expect(element.find('button[ng-click="unlike()"]').length).toBe(1);
       expect(element.find('button[ng-click="focusMediaCommentArea($event)"]').length).toBe(1);
-      expect(element.find('button[ng-click="editMedia(media)"]').length).toBe(1);
+      expect(element.find('button[ng-click="service.editMedia(media)"]').length).toBe(1);
       expect(element.find('button[ng-click="displayPreviousComments()"]').length).toBe(1);
-      // comment elements presences
+      // comment elements presence
       expect(element.find('.media.comment-editor').length).toBe(1);
       expect(element.find('.media.comment-editor .media-body').length).toBe(1);
       expect(element.find('.media.comment-editor form[ng-submit="comment()"]').length).toBe(1);
       expect(element.find('.media.comment-editor input[type="submit"]').length).toBe(1);
-      // check gravatars presence
+      // check image precence
       expect(element.find('img').length).toBe(2);
-      expect(element.find('img:eq(0)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
-      expect(element.find('img:eq(1)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
+      expect(element.find('img:eq(0)').attr('src')).toBe('/users/user-id/picture');
+      expect(element.find('img:eq(1)').attr('src')).toBe('/users/current-user-id/picture');
       // no comments
       expect(element.find('.media.comment').length).toBe(0);
       // no one like
@@ -95,9 +130,9 @@ describe('angular.bootstrap.media', function () {
       $scope.$digest();
       // check gravatars presence
       expect(element.find('img').length).toBe(3);
-      expect(element.find('img:eq(0)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
-      expect(element.find('img:eq(1)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
-      expect(element.find('img:eq(2)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
+      expect(element.find('img:eq(0)').attr('src')).toBe('/users/user-id/picture');
+      expect(element.find('img:eq(1)').attr('src')).toBe('/users/user-id/picture');
+      expect(element.find('img:eq(2)').attr('src')).toBe('/users/current-user-id/picture');
       // no comments
       expect(element.find('.media.comment').length).toBe(1);
       // no one like
@@ -218,9 +253,10 @@ describe('angular.bootstrap.media', function () {
   describe('comment', function () {
     beforeEach(inject(function($rootScope, $compile) {
       $scope = $rootScope;
-      $scope.currentUser = { _id: 'user-id' };
+      $scope.service = service;
       var template = '<comment ' +
         'media="media" ' +
+        'service="service" ' +
         'comment="comment" ' +
         'on-comment-remove="removeComment(comment)" ' +
         'default-gravatar-image="monsterid">' +
@@ -241,7 +277,7 @@ describe('angular.bootstrap.media', function () {
       expect(element.find('button[ng-click="removeComment(comment)"]').length).toBe(1);
       // check gravatars presence
       expect(element.find('img').length).toBe(1);
-      expect(element.find('img:eq(0)').attr('ng-src')).toBe('http://www.gravatar.com/avatar/?s=30&d=monsterid');
+      expect(element.find('img:eq(0)').attr('src')).toBe('/users/user-id/picture');
       // no one like
       expect(element.find('.comment-num-likes').length).toBe(1);
       expect(element.find('.comment-num-likes:eq(0)').text().trim()).toBe('0');

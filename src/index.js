@@ -1,14 +1,19 @@
 angular.module('angular.bootstrap.media', [
   'angular.bootstrap.media.templates',
-  'angular.simple.gravatar',
-  'ngSanitize'
+  'ui.bootstrap.tooltip'
 ])
 
 .controller('MediaController', ['$scope', function($scope){
   $scope.likersLoaded = false;
   $scope.likersText = 'Chargement...';
 
-  $scope.creatorLink = $scope.media.$getCreatorLink($scope.media.creator._id);
+  $scope.creatorProfileLink = $scope.service.getCreatorProfileLink($scope.media);
+  $scope.creatorPictureLink = $scope.service.getCreatorPictureLink($scope.media);
+  $scope.deleteLabel        = $scope.service.getDeleteLabel();
+
+  $scope.getText = function(){
+    return $scope.media.$getText();
+  };
 
   var updateSuccess = function(mediaUpdated) {
     $scope.media = mediaUpdated;
@@ -36,8 +41,8 @@ angular.module('angular.bootstrap.media', [
     }
 
     $scope.media.$getLikers(
-      function(likers) {
-        $scope.likersText = $scope.media.$formatLikersText(likers);
+      function(nameList) {
+        $scope.likersText = $scope.service.formatLikersText($scope.media.likesCount, nameList);
       },
       failsRequest
     );
@@ -80,11 +85,8 @@ angular.module('angular.bootstrap.media', [
     replace: true,
     scope: {
       media:                  '=',
-      maxLastComments:        '=',
-      'deleteLabel':          '@',
-      'defaultGravatarImage': '@',
-      'editMedia':            '&onMediaEdit',
-      'removeMedia':          '&onMediaRemove'
+      service:                '=',
+      maxLastComments:        '='
     },
     templateUrl: 'media.tpl.html',
     controller: 'MediaController'
@@ -95,7 +97,8 @@ angular.module('angular.bootstrap.media', [
   $scope.likersLoaded = false;
   $scope.likersText = 'Chargement...';
 
-  $scope.creatorLink = $scope.media.$getCreatorLink($scope.comment.creator._id);
+  $scope.creatorProfileLink = $scope.service.getCreatorProfileLink($scope.comment);
+  $scope.creatorPictureLink = $scope.service.getCreatorPictureLink($scope.comment);
 
   var updateSuccess = function(commentId) {
     return function() {
@@ -130,8 +133,8 @@ angular.module('angular.bootstrap.media', [
 
     $scope.media.$getCommentLikers(
       $scope.comment._id,
-      function(likers) {
-        $scope.likersText = $scope.media.$formatLikersText(likers);
+      function(nameList) {
+        $scope.likersText = $scope.service.formatLikersText($scope.comment.likesCount, nameList);
       },
       failsRequest
     );
@@ -145,7 +148,7 @@ angular.module('angular.bootstrap.media', [
     scope: {
       media:                  '=',
       comment:                '=',
-      'defaultGravatarImage': '@',
+      service:                '=',
       'removeComment':        '&onCommentRemove'
     },
     templateUrl: 'comment.tpl.html',

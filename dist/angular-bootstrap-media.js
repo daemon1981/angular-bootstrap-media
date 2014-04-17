@@ -1,18 +1,23 @@
-/*! angular-bootstrap-media - v0.0.10 - 2014-04-16
+/*! angular-bootstrap-media - v0.0.10 - 2014-04-17
  * Copyright (c) 2014 Damien Saillard <dam.saillard@gmail.com> (http://damien-saillard.fr/);
  * Licensed 
  */
 angular.module('angular.bootstrap.media', [
   'angular.bootstrap.media.templates',
-  'angular.simple.gravatar',
-  'ngSanitize'
+  'ui.bootstrap.tooltip'
 ])
 
 .controller('MediaController', ['$scope', function($scope){
   $scope.likersLoaded = false;
   $scope.likersText = 'Chargement...';
 
-  $scope.creatorLink = $scope.media.$getCreatorLink($scope.media.creator._id);
+  $scope.creatorProfileLink = $scope.service.getCreatorProfileLink($scope.media);
+  $scope.creatorPictureLink = $scope.service.getCreatorPictureLink($scope.media);
+  $scope.deleteLabel        = $scope.service.getDeleteLabel();
+
+  $scope.getText = function(){
+    return $scope.media.$getText();
+  };
 
   var updateSuccess = function(mediaUpdated) {
     $scope.media = mediaUpdated;
@@ -40,8 +45,8 @@ angular.module('angular.bootstrap.media', [
     }
 
     $scope.media.$getLikers(
-      function(likers) {
-        $scope.likersText = $scope.media.$formatLikersText(likers);
+      function(nameList) {
+        $scope.likersText = $scope.service.formatLikersText($scope.media.likesCount, nameList);
       },
       failsRequest
     );
@@ -84,11 +89,8 @@ angular.module('angular.bootstrap.media', [
     replace: true,
     scope: {
       media:                  '=',
-      maxLastComments:        '=',
-      'deleteLabel':          '@',
-      'defaultGravatarImage': '@',
-      'editMedia':            '&onMediaEdit',
-      'removeMedia':          '&onMediaRemove'
+      service:                '=',
+      maxLastComments:        '='
     },
     templateUrl: 'media.tpl.html',
     controller: 'MediaController'
@@ -99,7 +101,8 @@ angular.module('angular.bootstrap.media', [
   $scope.likersLoaded = false;
   $scope.likersText = 'Chargement...';
 
-  $scope.creatorLink = $scope.media.$getCreatorLink($scope.comment.creator._id);
+  $scope.creatorProfileLink = $scope.service.getCreatorProfileLink($scope.comment);
+  $scope.creatorPictureLink = $scope.service.getCreatorPictureLink($scope.comment);
 
   var updateSuccess = function(commentId) {
     return function() {
@@ -134,8 +137,8 @@ angular.module('angular.bootstrap.media', [
 
     $scope.media.$getCommentLikers(
       $scope.comment._id,
-      function(likers) {
-        $scope.likersText = $scope.media.$formatLikersText(likers);
+      function(nameList) {
+        $scope.likersText = $scope.service.formatLikersText($scope.comment.likesCount, nameList);
       },
       failsRequest
     );
@@ -149,7 +152,7 @@ angular.module('angular.bootstrap.media', [
     scope: {
       media:                  '=',
       comment:                '=',
-      'defaultGravatarImage': '@',
+      service:                '=',
       'removeComment':        '&onCommentRemove'
     },
     templateUrl: 'comment.tpl.html',
@@ -163,7 +166,7 @@ angular.module("comment.tpl.html", []).run(["$templateCache", function($template
   $templateCache.put("comment.tpl.html",
     "<div class=\"media comment\">" +
     "    <a class=\"pull-left\" href=\"#\">" +
-    "        <gravatar email=\"comment.creator.email\" size=\"30\" class=\"img-polaroid pull-right\" default-image=\"defaultGravatarImage\"></gravatar>" +
+    "        <img ng-src=\"{{creatorPictureLink}}\" width=\"30\" class=\"img-polaroid pull-right\">" +
     "    </a>" +
     "    <div class=\"media-body\">" +
     "        <a class=\"creator\" href=\"{{creatorLink}}\">{{comment.creator.name}}</a> {{comment.message}}" +
@@ -184,29 +187,37 @@ angular.module("media.tpl.html", []).run(["$templateCache", function($templateCa
   $templateCache.put("media.tpl.html",
     "<div class=\"media\">" +
     "    <a class=\"pull-left\" href=\"#\">" +
-    "        <gravatar email=\"media.creator.email\" size=\"30\" class=\"img-polaroid pull-right\" default-image=\"defaultGravatarImage\"></gravatar>" +
+    "        <img ng-src=\"{{creatorPictureLink}}\" width=\"30\" class=\"img-polaroid pull-right\">" +
     "    </a>" +
     "    <div class=\"media-body\">" +
     "        <a class=\"creator\" href=\"{{creatorLink}}\">{{media.creator.name}}</a>" +
-    "        <div ng-bind-html=\"media.text\"></div>" +
+    "        <div>{{getText()}}</div>" +
     "        <div>" +
-    "            <button type=\"button\" class=\"btn btn-danger btn-xs\" ng-show=\"media.editable\" ng-click=\"removeMedia(media)\">{{deleteLabel}}</button>" +
+    "            <button type=\"button\" class=\"btn btn-danger btn-xs\" ng-show=\"media.editable\" ng-click=\"service.removeMedia(media)\">{{deleteLabel}}</button>" +
     "            &nbsp;&nbsp;" +
     "            <span class=\"badge ng-binding media-num-likes\" tooltip-html-unsafe=\"{{likersText}}\" tooltip-placement=\"bottom\" ng-mouseover=\"getLikers()\">{{media.likesCount}} <span class=\"glyphicon glyphicon-thumbs-up\"></span></span>" +
     "            <button type=\"button\" class=\"btn btn-link\" ng-show=\"!media.liked\" ng-click=\"like()\">Like</button>" +
     "            <button type=\"button\" class=\"btn btn-link\" ng-show=\"media.liked\" ng-click=\"unlike()\">Unlike</button>" +
     "            <button type=\"button\" class=\"btn btn-link\" ng-click=\"focusMediaCommentArea($event)\">Comment</button>" +
-    "            <button type=\"button\" class=\"btn btn-default btn-xs\" ng-show=\"media.editable\" ng-click=\"editMedia(media)\">" +
+    "            <button type=\"button\" class=\"btn btn-default btn-xs\" ng-show=\"media.editable\" ng-click=\"service.editMedia(media)\">" +
     "                <span class=\"glyphicon glyphicon-pencil\"></span>" +
     "            </button>" +
     "        </div>" +
     "        <div>" +
     "            <button type=\"button\" class=\"btn btn-link\" ng-click=\"displayPreviousComments()\">Voir les commentaires précédents</button>" +
     "        </div>" +
-    "        <comment class=\"comment\" comment=\"comment\" media=\"media\" ng-repeat=\"comment in media.comments\" on-comment-remove=\"removeComment(comment)\" default-gravatar-image=\"{{defaultGravatarImage}}\"></comment>" +
+    "        <comment" +
+    "            class=\"comment\"" +
+    "            media=\"media\"" +
+    "            comment=\"comment\"" +
+    "            service=\"service\"" +
+    "            ng-repeat=\"comment in media.comments\"" +
+    "            on-comment-remove=\"removeComment(comment)\"" +
+    "            default-gravatar-image=\"{{defaultGravatarImage}}\">" +
+    "        </comment>" +
     "        <div class=\"media comment-editor\">" +
     "            <a class=\"pull-left\" href=\"#\">" +
-    "                <gravatar email=\"currentUser.email\" size=\"30\" class=\"img-polaroid pull-right\" default-image=\"defaultGravatarImage\"></gravatar>" +
+    "                <img ng-src=\"{{service.getUserPictureLink()}}\" width=\"30\" class=\"img-polaroid pull-right\">" +
     "            </a>" +
     "            <div class=\"media-body\">" +
     "                <form ng-submit=\"comment()\">" +

@@ -17,6 +17,7 @@ module.exports = function(config) {
       'bower_components/angular-ui-bootstrap/src/tooltip/tooltip.js',
       'bower_components/angular-mocks/angular-mocks.js',
       'dist/angular-bootstrap-media.js',
+      'test/vendor/**/*.js',
       'test/unit/**/*.js'
     ],
     
