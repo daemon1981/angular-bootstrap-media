@@ -90,10 +90,7 @@ module.exports = function (grunt) {
           '<%= src.vendorTpl %>',
           'bower_components/angular-ui-bootstrap/src/bindHtml/bindHtml.js',
           'bower_components/angular-ui-bootstrap/src/position/position.js',
-          'bower_components/angular-ui-bootstrap/src/tooltip/tooltip.js',
-          'bower_components/angular-translate/angular-translate.js',
-          'bower_components/messageformat/messageformat.js',
-          'bower_components/angular-translate-interpolation-messageformat/angular-translate-interpolation-messageformat.js'
+          'bower_components/angular-ui-bootstrap/src/tooltip/tooltip.js'
         ],
         dest: '<%= demodir %>/lib.js'
       }

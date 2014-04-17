@@ -1,11 +1,18 @@
-/*! angular-bootstrap-media - v0.0.10 - 2014-04-08
+/*! angular-bootstrap-media - v0.0.10 - 2014-04-16
  * Copyright (c) 2014 Damien Saillard <dam.saillard@gmail.com> (http://damien-saillard.fr/);
  * Licensed 
  */
-angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 'angular.simple.gravatar', 'ngSanitize'])
+angular.module('angular.bootstrap.media', [
+  'angular.bootstrap.media.templates',
+  'angular.simple.gravatar',
+  'ngSanitize'
+])
 
 .controller('MediaController', ['$scope', function($scope){
-  $scope.media.likers = 'Chargement...';
+  $scope.likersLoaded = false;
+  $scope.likersText = 'Chargement...';
+
+  $scope.creatorLink = $scope.media.$getCreatorLink($scope.media.creator._id);
 
   var updateSuccess = function(mediaUpdated) {
     $scope.media = mediaUpdated;
@@ -19,10 +26,6 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
     $($event.currentTarget).closest('.media-body').find('.form-control').focus();
   };
 
-  $scope.userInArray = function(userIds) {
-    return userIds.indexOf($scope.currentUser._id) !== -1;
-  };
-
   $scope.like = function() {
     $scope.media.$addLike(updateSuccess, failsRequest);
   };
@@ -32,20 +35,16 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
   };
 
   $scope.getLikers = function() {
-    if (typeof $scope.media.likers !== 'string') {
-      return $scope.media.likers;
+    if ($scope.likersLoaded === true) {
+      return $scope.likersText;
     }
 
     $scope.media.$getLikers(
       function(likers) {
-        $scope.media.likers = likers.join('<br>');
+        $scope.likersText = $scope.media.$formatLikersText(likers);
       },
       failsRequest
     );
-  };
-
-  $scope.ownMedia = function() {
-    return $scope.media.creator._id === $scope.currentUser._id;
   };
 
   $scope.comment = function() {
@@ -84,7 +83,6 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
     restrict: 'E',
     replace: true,
     scope: {
-      currentUser:            '=',
       media:                  '=',
       maxLastComments:        '=',
       'deleteLabel':          '@',
@@ -98,6 +96,11 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
 })
 
 .controller('CommentController', ['$scope', function($scope){
+  $scope.likersLoaded = false;
+  $scope.likersText = 'Chargement...';
+
+  $scope.creatorLink = $scope.media.$getCreatorLink($scope.comment.creator._id);
+
   var updateSuccess = function(commentId) {
     return function() {
       $scope.media.$getComment(
@@ -112,26 +115,30 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
     };
   };
 
-  var updateError = function() {
+  var failsRequest = function() {
     console.log('error');
   };
 
-  $scope.userInArray = function(userIds) {
-    if (userIds) {
-      return userIds.indexOf($scope.currentUser._id) !== -1;
-    }
-  };
-
   $scope.likeComment = function() {
-    $scope.media.$addLikeToComment($scope.comment._id, updateSuccess($scope.comment._id), updateError);
+    $scope.media.$addLikeToComment($scope.comment._id, updateSuccess($scope.comment._id), failsRequest);
   };
 
   $scope.unlikeComment = function() {
-    $scope.media.$removeLikeFromComment($scope.comment._id, updateSuccess($scope.comment._id), updateError);
+    $scope.media.$removeLikeFromComment($scope.comment._id, updateSuccess($scope.comment._id), failsRequest);
   };
 
-  $scope.ownComment = function() {
-    return $scope.comment.creator._id === $scope.currentUser._id;
+  $scope.getLikers = function() {
+    if ($scope.likersLoaded === true) {
+      return $scope.likersText;
+    }
+
+    $scope.media.$getCommentLikers(
+      $scope.comment._id,
+      function(likers) {
+        $scope.likersText = $scope.media.$formatLikersText(likers);
+      },
+      failsRequest
+    );
   };
 }])
 
@@ -140,7 +147,6 @@ angular.module('angular.bootstrap.media', ['angular.bootstrap.media.templates', 
     restrict: 'E',
     replace: true,
     scope: {
-      currentUser:            '=',
       media:                  '=',
       comment:                '=',
       'defaultGravatarImage': '@',
@@ -160,12 +166,13 @@ angular.module("comment.tpl.html", []).run(["$templateCache", function($template
     "        <gravatar email=\"comment.creator.email\" size=\"30\" class=\"img-polaroid pull-right\" default-image=\"defaultGravatarImage\"></gravatar>" +
     "    </a>" +
     "    <div class=\"media-body\">" +
-    "        {{comment.message}}" +
+    "        <a class=\"creator\" href=\"{{creatorLink}}\">{{comment.creator.name}}</a> {{comment.message}}" +
     "        <div>" +
-    "            <span class=\"badge ng-binding comment-num-likes\">{{comment.likes.length}} <span class=\"glyphicon glyphicon-thumbs-up\"></span></span>" +
-    "            <button type=\"button\" class=\"btn btn-link\" ng-show=\"!userInArray(comment.likes)\" ng-click=\"likeComment()\">Like</button>" +
-    "            <button type=\"button\" class=\"btn btn-link\" ng-show=\"userInArray(comment.likes)\" ng-click=\"unlikeComment()\">Unlike</button>" +
-    "            <button type=\"button\" class=\"btn btn-danger btn-xs\" ng-show=\"ownComment()\" ng-click=\"removeComment(comment)\">" +
+    "            <span>{{ comment.dateCreation | date:'medium' }}</span>" +
+    "            <span class=\"badge ng-binding comment-num-likes\" tooltip-html-unsafe=\"{{likersText}}\" tooltip-placement=\"bottom\" ng-mouseover=\"getLikers()\">{{comment.likesCount}} <span class=\"glyphicon glyphicon-thumbs-up\"></span></span>" +
+    "            <button type=\"button\" class=\"btn btn-link\" ng-show=\"!comment.liked\" ng-click=\"likeComment()\">Like</button>" +
+    "            <button type=\"button\" class=\"btn btn-link\" ng-show=\"comment.liked\" ng-click=\"unlikeComment()\">Unlike</button>" +
+    "            <button type=\"button\" class=\"btn btn-danger btn-xs\" ng-show=\"comment.editable\" ng-click=\"removeComment(comment)\">" +
     "                <span class=\"glyphicon glyphicon-remove\"></span>" +
     "            </button>" +
     "        </div>" +
@@ -180,22 +187,23 @@ angular.module("media.tpl.html", []).run(["$templateCache", function($templateCa
     "        <gravatar email=\"media.creator.email\" size=\"30\" class=\"img-polaroid pull-right\" default-image=\"defaultGravatarImage\"></gravatar>" +
     "    </a>" +
     "    <div class=\"media-body\">" +
+    "        <a class=\"creator\" href=\"{{creatorLink}}\">{{media.creator.name}}</a>" +
     "        <div ng-bind-html=\"media.text\"></div>" +
     "        <div>" +
-    "            <button type=\"button\" class=\"btn btn-danger btn-xs\" ng-show=\"ownMedia()\" ng-click=\"removeMedia(media)\">{{deleteLabel}}</button>" +
+    "            <button type=\"button\" class=\"btn btn-danger btn-xs\" ng-show=\"media.editable\" ng-click=\"removeMedia(media)\">{{deleteLabel}}</button>" +
     "            &nbsp;&nbsp;" +
-    "            <span class=\"badge ng-binding media-num-likes\" tooltip-html-unsafe=\"{{media.likers}}\" tooltip-placement=\"bottom\" ng-mouseover=\"getLikers()\">{{media.likes.length}} <span class=\"glyphicon glyphicon-thumbs-up\"></span></span>" +
-    "            <button type=\"button\" class=\"btn btn-link\" ng-show=\"!userInArray(media.likes)\" ng-click=\"like()\">Like</button>" +
-    "            <button type=\"button\" class=\"btn btn-link\" ng-show=\"userInArray(media.likes)\" ng-click=\"unlike()\">Unlike</button>" +
+    "            <span class=\"badge ng-binding media-num-likes\" tooltip-html-unsafe=\"{{likersText}}\" tooltip-placement=\"bottom\" ng-mouseover=\"getLikers()\">{{media.likesCount}} <span class=\"glyphicon glyphicon-thumbs-up\"></span></span>" +
+    "            <button type=\"button\" class=\"btn btn-link\" ng-show=\"!media.liked\" ng-click=\"like()\">Like</button>" +
+    "            <button type=\"button\" class=\"btn btn-link\" ng-show=\"media.liked\" ng-click=\"unlike()\">Unlike</button>" +
     "            <button type=\"button\" class=\"btn btn-link\" ng-click=\"focusMediaCommentArea($event)\">Comment</button>" +
-    "            <button type=\"button\" class=\"btn btn-default btn-xs\" ng-show=\"ownMedia()\" ng-click=\"editMedia(media)\">" +
+    "            <button type=\"button\" class=\"btn btn-default btn-xs\" ng-show=\"media.editable\" ng-click=\"editMedia(media)\">" +
     "                <span class=\"glyphicon glyphicon-pencil\"></span>" +
     "            </button>" +
     "        </div>" +
     "        <div>" +
     "            <button type=\"button\" class=\"btn btn-link\" ng-click=\"displayPreviousComments()\">Voir les commentaires précédents</button>" +
     "        </div>" +
-    "        <comment class=\"comment\" comment=\"comment\" media=\"media\" current-user=\"currentUser\" ng-repeat=\"comment in media.comments\" on-comment-remove=\"removeComment(comment)\" default-gravatar-image=\"{{defaultGravatarImage}}\"></comment>" +
+    "        <comment class=\"comment\" comment=\"comment\" media=\"media\" ng-repeat=\"comment in media.comments\" on-comment-remove=\"removeComment(comment)\" default-gravatar-image=\"{{defaultGravatarImage}}\"></comment>" +
     "        <div class=\"media comment-editor\">" +
     "            <a class=\"pull-left\" href=\"#\">" +
     "                <gravatar email=\"currentUser.email\" size=\"30\" class=\"img-polaroid pull-right\" default-image=\"defaultGravatarImage\"></gravatar>" +

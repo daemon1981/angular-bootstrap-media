@@ -42,6 +42,8 @@ describe('angular.bootstrap.media', function () {
     };
 
     media.$id = function() { return media._id; };
+    media.$getCreatorLink = function(creatorId) { return '/users/' + creatorId; };
+    media.$formatLikersText = function(likers) { return likers.join(','); };
 
     return media;
   }

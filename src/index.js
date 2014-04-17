@@ -1,24 +1,14 @@
 angular.module('angular.bootstrap.media', [
   'angular.bootstrap.media.templates',
   'angular.simple.gravatar',
-  'ngSanitize',
-  'pascalprecht.translate'
+  'ngSanitize'
 ])
 
-.config(['$translateProvider', function($translateProvider){
-  $translateProvider.translations('en', {
-    'CREATOR_URL': '/users/{{id}}',
-    'LIKERS_TEXT': '{{likersText}} {othersCount, plural, zero{} one{and one other person} other{and # others}}.'
-  });
-  $translateProvider.useMessageFormatInterpolation();
-  $translateProvider.preferredLanguage('en');
-}])
-
-.controller('MediaController', ['$scope', '$translate', function($scope, $translate){
+.controller('MediaController', ['$scope', function($scope){
   $scope.likersLoaded = false;
   $scope.likersText = 'Chargement...';
 
-  $scope.creatorLink = $translate.instant('CREATOR_URL', { id: $scope.media.creator._id });
+  $scope.creatorLink = $scope.media.$getCreatorLink($scope.media.creator._id);
 
   var updateSuccess = function(mediaUpdated) {
     $scope.media = mediaUpdated;
@@ -47,13 +37,7 @@ angular.module('angular.bootstrap.media', [
 
     $scope.media.$getLikers(
       function(likers) {
-        $scope.likersText = $translate.instant(
-          'LIKERS_TEXT',
-          {
-            likersText: likers.join('<br>'),
-            othersCount: $scope.media.likesCount - likers.length
-          }
-        );
+        $scope.likersText = $scope.media.$formatLikersText(likers);
       },
       failsRequest
     );
@@ -107,11 +91,11 @@ angular.module('angular.bootstrap.media', [
   };
 })
 
-.controller('CommentController', ['$scope', '$translate', function($scope, $translate){
+.controller('CommentController', ['$scope', function($scope){
   $scope.likersLoaded = false;
   $scope.likersText = 'Chargement...';
 
-  $scope.creatorLink = $translate.instant('CREATOR_URL', { id: $scope.comment.creator._id });
+  $scope.creatorLink = $scope.media.$getCreatorLink($scope.comment.creator._id);
 
   var updateSuccess = function(commentId) {
     return function() {
@@ -147,14 +131,7 @@ angular.module('angular.bootstrap.media', [
     $scope.media.$getCommentLikers(
       $scope.comment._id,
       function(likers) {
-        $scope.likersText = $translate.instant(
-          'LIKERS_TEXT',
-          {
-            likersText: likers.join('<br>'),
-            othersCount: $scope.comment.likesCount - likers.length
-          }
-        );
-        $scope.likersLoaded = true;
+        $scope.likersText = $scope.media.$formatLikersText(likers);
       },
       failsRequest
     );
